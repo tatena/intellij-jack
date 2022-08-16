@@ -32,16 +32,19 @@ WHITE_SPACE=(\s|\t)+
 %%
 <YYINITIAL> {
 
+"class" {return JackTypes.CLASS; }
   "field"                { return JackTypes.FIELD; }
   "static"                { return JackTypes.STATIC; }
   "boolean"                { return JackTypes.BOOLEAN; }
   "char"                { return JackTypes.CHAR; }
   "int"                { return JackTypes.INT; }
   ";"                { return JackTypes.SEMICOLON; }
+      "{" {return JackTypes.LBRACE; }
+      "}" {return JackTypes.RBRACE; }
 
 
   {IDENTIFIER}            { return JackTypes.IDENTIFIER; }
-  {WHITE_SPACE}      { return TokenType.WHITE_SPACE; }
+  {WHITE_SPACE} | {NEW_LINE}     { return TokenType.WHITE_SPACE; }
 }
 
 [^] { return BAD_CHARACTER; }

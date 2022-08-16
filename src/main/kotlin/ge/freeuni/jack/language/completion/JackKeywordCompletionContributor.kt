@@ -14,7 +14,6 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.TokenType
 import ge.freeuni.jack.language.psi.JackFile
 import ge.freeuni.jack.language.psi.JackTypes
-import ge.freeuni.jack.language.psi.JackVariables
 
 class JackKeywordCompletionContributor : CompletionContributor() {
     private fun registerStandardCompletion(
