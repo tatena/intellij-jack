@@ -1,0 +1,25 @@
+{
+  parserClass="ge.freeuni.jack.language.parser.JackParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Jack"
+  psiImplClassSuffix="Impl"
+  psiPackage="ge.freeuni.jack.language.psi"
+  psiImplPackage="ge.freeuni.jack.language.psi.impl"
+
+  elementTypeHolderClass="ge.freeuni.jack.language.psi.JackTypes"
+  elementTypeClass="ge.freeuni.jack.language.psi.JackElementType"
+  tokenTypeClass="ge.freeuni.jack.language.psi.JackTokenType"
+
+  tokens=[
+    SEMICOLON = ";"
+  ]
+
+}
+
+simpleFile ::= Variables*
+
+Variables ::= (static | field) (int | char | boolean) identifier SEMICOLON {
+    pin = 1
+}
