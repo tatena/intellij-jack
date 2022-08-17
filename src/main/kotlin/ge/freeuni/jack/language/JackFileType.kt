@@ -4,6 +4,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
 class JackFileType:  LanguageFileType(JackLanguage.INSTANCE) {
+    
     override fun getName(): String {
         return "Jack File"
     }

@@ -14,12 +14,21 @@
 
   tokens=[
     SEMICOLON = ";"
+    LBRACE = "{"
+    RBRACE = "}"
   ]
 
 }
 
-simpleFile ::= Variables*
+File ::= ClassDeclaration?
+ClassDeclaration ::= class ClassNameDefinition ClassBody {pin=1}
 
-Variables ::= (static | field) (int | char | boolean) identifier SEMICOLON {
-    pin = 1
+ClassNameDefinition ::= identifier
+ClassBody ::= LBRACE Property* RBRACE {pin=1}
+
+Property ::= (static | field) (int | char | boolean) identifier SEMICOLON {
+	pin=1
+	recoverWhile=PropertyRecovery
 }
+
+private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
