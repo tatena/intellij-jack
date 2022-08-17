@@ -32,7 +32,7 @@ WHITE_SPACE=(\s|\t)+
 %%
 <YYINITIAL> {
 
-"class" {return JackTypes.CLASS; }
+"class" 	{return JackTypes.JCLASS; }
   "field"                { return JackTypes.FIELD; }
   "static"                { return JackTypes.STATIC; }
   "boolean"                { return JackTypes.BOOLEAN; }

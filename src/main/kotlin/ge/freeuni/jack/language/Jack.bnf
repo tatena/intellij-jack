@@ -16,19 +16,28 @@
     SEMICOLON = ";"
     LBRACE = "{"
     RBRACE = "}"
+    JCLASS = "class"
   ]
 
+	generateTokenAccessors=true
+	psiImplUtilClass="ge.freeuni.jack.language.psi.impl.JackPsiImplUtil"
 }
 
 File ::= ClassDeclaration?
-ClassDeclaration ::= class ClassNameDefinition ClassBody {pin=1}
+ClassDeclaration ::= JCLASS ClassNameDefinition ClassBody {
+	pin=1
+	methods=[getClassName]
+}
 
 ClassNameDefinition ::= identifier
 ClassBody ::= LBRACE Property* RBRACE {pin=1}
 
-Property ::= (static | field) (int | char | boolean) identifier SEMICOLON {
+Property ::= (static | field) Type identifier SEMICOLON {
 	pin=1
 	recoverWhile=PropertyRecovery
 }
+private Type ::= PrimitiveType | ReferenceType
+PrimitiveType ::= (int | boolean | char)
+ReferenceType ::= identifier
 
 private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 

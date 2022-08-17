@@ -19,11 +19,16 @@ class JackSyntaxHighlighter : SyntaxHighlighterBase() {
             createTextAttributesKey("KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
         val IDENTIFIER: TextAttributesKey =
             createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
+        
+        val ANNOTATION: TextAttributesKey = 
+            createTextAttributesKey("CLASS_NAME", DefaultLanguageHighlighterColors.METADATA)
+        
+        private val KEYWORDS = arrayOf(KEYWORD)
+        
+        private val IDENTIFIERS = arrayOf(IDENTIFIER)
     }
 
 
-    private val KEYWORDS = arrayOf(KEYWORD)
-    private val IDENTIFIERS = arrayOf(IDENTIFIER)
 
     override fun getHighlightingLexer(): Lexer {
         return JackLexerAdapter()

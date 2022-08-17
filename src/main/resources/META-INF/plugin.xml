@@ -50,6 +50,10 @@
         <lang.braceMatcher 
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackBraceMatcher"/>
+        
+        <annotator
+            language="Jack"
+            implementationClass="ge.freeuni.jack.language.annotator.JackAnnotator"/>
     </extensions>
 
     <actions>
