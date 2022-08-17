@@ -32,8 +32,6 @@ object JackUtil {
             if (file != null) {
                 val jackClass = PsiTreeUtil.getChildOfType(file, JackClassDeclaration::class.java)
                 jackClass?.let { jclass ->
-                    println("trying to match: ${jclass.className ?: "COULDNT GET NAME"}\n" +
-                            "with name: $name")
                     if (jclass.className.toString() == name) {
                         return jclass
                     }

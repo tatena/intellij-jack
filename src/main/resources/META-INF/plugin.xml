@@ -54,6 +54,7 @@
         <annotator
             language="Jack"
             implementationClass="ge.freeuni.jack.language.annotator.JackAnnotator"/>
+        
     </extensions>
 
     <actions>
