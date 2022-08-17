@@ -53,12 +53,34 @@
 
         <moduleType id="JACK_MODULE" implementationClass="ge.freeuni.jack.ide.newProject.JackModuleType"/>
         <moduleBuilder builderClass="ge.freeuni.jack.ide.newProject.JackModuleBuilder"/>
+        <projectService serviceInterface="ge.freeuni.jack.project.settings.JackProjectSettingsService"
+                        serviceImplementation="ge.freeuni.jack.project.settings.JackProjectSettingsServiceImpl"/>
+        <directoryProjectGenerator implementation="ge.freeuni.jack.ide.newProject.JackDirectoryProjectGenerator"/>
+
 
     </extensions>
+
+    <extensions defaultExtensionNs="ge.freeuni">
+
+
+        <toolchainProvider implementation="ge.freeuni.jack.toolchain.JackLocalToolChainProvider"/>
+    </extensions>
+
+    <extensionPoints>
+
+        <extensionPoint qualifiedName="ge.freeuni.toolchainProvider"
+                        interface="ge.freeuni.jack.toolchain.JackToolChainProvider"
+                        dynamic="true"/>
+        <extensionPoint qualifiedName="ge.freeuni.toolchainFlavor"
+                        interface="ge.freeuni.jack.toolchain.flavors.JackToolChainFlavor"
+                        dynamic="true"/>
+
+    </extensionPoints>
 
     <actions>
         <action id="Jack.NewFile" class="ge.freeuni.jack.action.JackCreateFileAction">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
+
     </actions>
 </idea-plugin>
