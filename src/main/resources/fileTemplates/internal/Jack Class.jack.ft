@@ -1,0 +1,9 @@
+class ${NAME} {
+
+#if(${NAME}=="Main")    
+    function void main() {
+        
+    }
+#end
+
+}
