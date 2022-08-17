@@ -54,6 +54,10 @@
         <annotator
             language="Jack"
             implementationClass="ge.freeuni.jack.language.annotator.JackAnnotator"/>
+
+        <codeInsight.lineMarkerProvider
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackLineMarkerProvider"/>
         
     </extensions>
 
