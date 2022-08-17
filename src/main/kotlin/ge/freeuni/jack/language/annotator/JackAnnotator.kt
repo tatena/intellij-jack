@@ -7,15 +7,16 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.annotation.HighlightSeverity.ERROR
 import com.intellij.lang.annotation.HighlightSeverity.INFORMATION
 import com.intellij.psi.PsiElement
+import com.jetbrains.rd.util.string.print
 import ge.freeuni.jack.language.JackUtil
 import ge.freeuni.jack.language.highlighter.JackSyntaxHighlighter
 import ge.freeuni.jack.language.psi.JackClassDeclaration
+import ge.freeuni.jack.language.psi.JackElementFactory
 import ge.freeuni.jack.language.psi.JackReferenceType
 
 class JackAnnotator: Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (element is JackReferenceType) {
-            println("am reference type !!!")
             val jclass = JackUtil.findClass(element.project, element.identifier.text)
             val range = element.textRange
             
@@ -29,6 +30,15 @@ class JackAnnotator: Annotator {
                     .range(range).highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
                     .create()
             }
+        }
+        
+        if (element is JackClassDeclaration) {
+            println("--------------------" +
+                    "\ntrying element factory\n" +
+                    "--------------------")
+            
+            val el = JackElementFactory.createClassNameDef(element.project, "Asumaaaaaa")
+            println(el?.identifier?.text ?: "EMPTYYYYYYYY")
         }
     }
 

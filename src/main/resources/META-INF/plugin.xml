@@ -58,6 +58,14 @@
         <codeInsight.lineMarkerProvider
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackLineMarkerProvider"/>
+    
+        <lang.findUsagesProvider
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFindUsagesProvider"/>
+
+        <lang.refactoringSupport
+                language="Jack"
+                implementationClass="ge.freeuni.jack.language.reference.JackRefactoringSupportProvider"/>
         
     </extensions>
 

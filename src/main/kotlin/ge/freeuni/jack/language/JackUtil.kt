@@ -6,17 +6,18 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.psi.JackClassDeclaration
+import ge.freeuni.jack.language.psi.JackClassNameDefinition
 import ge.freeuni.jack.language.psi.JackFile
 
 object JackUtil {
     @JvmStatic
-    fun findClasses(project: Project): List<JackClassDeclaration> {
-        val res = arrayListOf<JackClassDeclaration>()
+    fun findClasses(project: Project): List<JackClassNameDefinition> {
+        val res = arrayListOf<JackClassNameDefinition>()
         val vFiles = FileTypeIndex.getFiles(JackFileType.INSTANCE, GlobalSearchScope.allScope(project))
         for (virtualFile in vFiles) {
             val file = PsiManager.getInstance(project).findFile(virtualFile) as? JackFile
             if (file != null) {
-                val jackClass = PsiTreeUtil.getChildOfType(file, JackClassDeclaration::class.java)
+                val jackClass = PsiTreeUtil.getChildOfType(file, JackClassNameDefinition::class.java)
                 jackClass?.let { res.add(it) }
             }
         }

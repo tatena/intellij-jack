@@ -29,7 +29,11 @@ ClassDeclaration ::= JCLASS ClassNameDefinition ClassBody {
 	methods=[getClassName]
 }
 
-ClassNameDefinition ::= identifier
+ClassNameDefinition ::= identifier {
+	mixin="ge.freeuni.jack.language.psi.impl.JackNamedElementImpl"
+	implements="ge.freeuni.jack.language.psi.JackNamedElement"
+	methods=[getClassName getNameIdentifier setName]
+}
 ClassBody ::= LBRACE Property* RBRACE {pin=1}
 
 Property ::= (static | field) Type identifier SEMICOLON {
@@ -38,6 +42,10 @@ Property ::= (static | field) Type identifier SEMICOLON {
 }
 private Type ::= PrimitiveType | ReferenceType
 PrimitiveType ::= (int | boolean | char)
-ReferenceType ::= identifier
+ReferenceType ::= identifier {
+	mixin="ge.freeuni.jack.language.psi.impl.JackNamedElementImpl"
+	implements="ge.freeuni.jack.language.psi.JackNamedElement"
+	methods=[setName getClassName getNameIdentifier]
+}
 
 private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
