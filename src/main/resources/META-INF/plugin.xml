@@ -44,7 +44,10 @@
                 implementation="ge.freeuni.jack.language.highlighter.JackColorSettingsPage"/>
 
         <completion.contributor
-            language="Jack"
-            implementationClass="ge.freeuni.jack.language.completion.JackKeywordCompletionContributor"/>
+                language="Jack"
+                implementationClass="ge.freeuni.jack.language.completion.JackKeywordCompletionContributor"/>
+        <moduleType id="JACK_MODULE" implementationClass="ge.freeuni.jack.ide.newProject.JackModuleType"/>
+        <moduleBuilder builderClass="ge.freeuni.jack.ide.newProject.JackModuleBuilder"/>
+
     </extensions>
 </idea-plugin>
