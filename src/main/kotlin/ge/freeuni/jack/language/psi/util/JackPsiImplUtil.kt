@@ -1,9 +1,11 @@
 package ge.freeuni.jack.language.psi.util
 
+import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.OrderedSet
+import ge.freeuni.jack.language.JackIcons
 import ge.freeuni.jack.language.JackUtil
 import ge.freeuni.jack.language.psi.JackClassDeclaration
 import ge.freeuni.jack.language.psi.JackClassNameDefinition
@@ -13,6 +15,7 @@ import ge.freeuni.jack.language.psi.JackReferenceType
 import ge.freeuni.jack.language.psi.JackTypes
 import ge.freeuni.jack.language.psi.JackVarReference
 import ge.freeuni.jack.language.reference.JackReferenceBase
+import javax.swing.Icon
 
 object JackPsiImplUtil {
     @JvmStatic

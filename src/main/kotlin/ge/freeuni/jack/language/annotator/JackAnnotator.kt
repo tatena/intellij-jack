@@ -29,15 +29,6 @@ class JackAnnotator: Annotator {
                     .create()
             }
         }
-        
-        if (element is JackClassDeclaration) {
-            println("--------------------" +
-                    "\ntrying element factory\n" +
-                    "--------------------")
-            
-            val el = JackElementFactory.createClassNameDef(element.project, "Asumaaaaaa")
-            println(el?.identifier?.text ?: "EMPTYYYYYYYY")
-        }
     }
 
 }

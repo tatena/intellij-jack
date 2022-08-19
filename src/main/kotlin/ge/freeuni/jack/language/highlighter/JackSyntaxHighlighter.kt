@@ -19,15 +19,14 @@ class JackSyntaxHighlighter : SyntaxHighlighterBase() {
             createTextAttributesKey("KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
         val IDENTIFIER: TextAttributesKey =
             createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
-        
-        val ANNOTATION: TextAttributesKey = 
-            createTextAttributesKey("CLASS_NAME", DefaultLanguageHighlighterColors.METADATA)
-        
-        private val KEYWORDS = arrayOf(KEYWORD)
-        
-        private val IDENTIFIERS = arrayOf(IDENTIFIER)
-    }
 
+        val ANNOTATION: TextAttributesKey =
+            createTextAttributesKey("CLASS_NAME", DefaultLanguageHighlighterColors.METADATA)
+
+        private val KEYWORDS = arrayOf(KEYWORD)
+
+        private val IDENTIFIERS = arrayOf(IDENTIFIER, ANNOTATION)
+    }
 
 
     override fun getHighlightingLexer(): Lexer {
@@ -36,11 +35,10 @@ class JackSyntaxHighlighter : SyntaxHighlighterBase() {
 
     override fun getTokenHighlights(tokenType: IElementType): @NotNull Array<TextAttributesKey> {
         return when (tokenType) {
-            JackTypes.INT,
-            JackTypes.BOOLEAN,
-            JackTypes.CHAR,
-            JackTypes.STATIC,
-            JackTypes.FIELD ->
+            JackTypes.INT, JackTypes.BOOLEAN, JackTypes.CHAR,
+            JackTypes.STATIC, JackTypes.FIELD, JackTypes.JCLASS,
+            JackTypes.METHOD, JackTypes.FUNCTION, JackTypes.VOID,
+            JackTypes.CONSTRUCTOR, JackTypes.LET, JackTypes.VAR ->
                 KEYWORDS
             JackTypes.IDENTIFIER,
             JackTypes.SEMICOLON ->
