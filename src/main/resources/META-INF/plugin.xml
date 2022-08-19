@@ -66,7 +66,10 @@
         <lang.refactoringSupport
                 language="Jack"
                 implementationClass="ge.freeuni.jack.language.reference.JackRefactoringSupportProvider"/>
+
+        <stubIndex implementation="ge.freeuni.jack.language.stub.JackClassNameIndex"/>
         
+        <stubElementTypeHolder class="ge.freeuni.jack.language.psi.JackTypes"/>
     </extensions>
 
     <actions>

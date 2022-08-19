@@ -12,14 +12,22 @@ import com.intellij.usageView.UsageViewShortNameLocation
 import ge.freeuni.jack.language.JackLexerAdapter
 import ge.freeuni.jack.language.psi.JackClassNameDefinition
 import ge.freeuni.jack.language.psi.JackNamedElement
+import ge.freeuni.jack.language.psi.JackPropertyDefinition
 import ge.freeuni.jack.language.psi.JackReferenceType
 import ge.freeuni.jack.language.psi.JackTypes
+import ge.freeuni.jack.language.psi.JackVarReference
 
 class JackFindUsagesProvider: FindUsagesProvider {
-    override fun getWordsScanner(): WordsScanner? {
+    override fun getWordsScanner(): WordsScanner {
         return DefaultWordsScanner(
             JackLexerAdapter(),
-            TokenSet.create(JackTypes.IDENTIFIER, JackTypes.CLASS_NAME_DEFINITION, JackTypes.REFERENCE_TYPE),
+            TokenSet.create(
+                JackTypes.IDENTIFIER,
+                JackTypes.CLASS_NAME_DEFINITION,
+                JackTypes.REFERENCE_TYPE,
+                JackTypes.PROPERTY_DEFINITION,
+                JackTypes.VAR_REFERENCE
+            ),
             TokenSet.EMPTY,
             TokenSet.EMPTY
         )
@@ -29,14 +37,16 @@ class JackFindUsagesProvider: FindUsagesProvider {
         return psiElement is JackNamedElement
     }
 
-    override fun getHelpId(psiElement: PsiElement): String? {
+    override fun getHelpId(psiElement: PsiElement): String {
         return HelpID.FIND_OTHER_USAGES
     }
 
     override fun getType(element: PsiElement): String {
         return when (element) {
             is JackClassNameDefinition -> "class_name"
+            is JackPropertyDefinition -> "property def"
             is JackReferenceType -> "class_ref"
+            is JackVarReference -> "var_ref "
             else -> "unknown"
         }
     }

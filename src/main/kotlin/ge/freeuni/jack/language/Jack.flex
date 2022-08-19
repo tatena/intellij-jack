@@ -38,9 +38,18 @@ WHITE_SPACE=(\s|\t)+
   "boolean"                { return JackTypes.BOOLEAN; }
   "char"                { return JackTypes.CHAR; }
   "int"                { return JackTypes.INT; }
+      "void" 	{ return JackTypes.VOID; }
   ";"                { return JackTypes.SEMICOLON; }
       "{" {return JackTypes.LBRACE; }
       "}" {return JackTypes.RBRACE; }
+      "(" {return JackTypes.LPAREN; }
+      ")" {return JackTypes.RPAREN; }
+      "function" {return JackTypes.FUNCTION; }
+      "method" {return JackTypes.METHOD; }
+      "constructor" {return JackTypes.CONSTRUCTOR; }
+      "," {return JackTypes.COMMA; }
+      "let" {return JackTypes.LET; }
+      "var" {return JackTypes.VAR; }
 
 
   {IDENTIFIER}            { return JackTypes.IDENTIFIER; }

@@ -9,18 +9,22 @@
   psiImplPackage="ge.freeuni.jack.language.psi.impl"
 
   elementTypeHolderClass="ge.freeuni.jack.language.psi.JackTypes"
-  elementTypeClass="ge.freeuni.jack.language.psi.JackElementType"
-  tokenTypeClass="ge.freeuni.jack.language.psi.JackTokenType"
+  elementTypeClass="ge.freeuni.jack.language.psi.type.JackElementType"
+  tokenTypeClass="ge.freeuni.jack.language.psi.type.JackTokenType"
 
   tokens=[
     SEMICOLON = ";"
     LBRACE = "{"
     RBRACE = "}"
     JCLASS = "class"
+    LPAREN = "("
+    RPAREN = ")"
+    COMMA = ","
   ]
 
 	generateTokenAccessors=true
-	psiImplUtilClass="ge.freeuni.jack.language.psi.impl.JackPsiImplUtil"
+	psiImplUtilClass="ge.freeuni.jack.language.psi.util.JackPsiImplUtil"
+	
 }
 
 File ::= ClassDeclaration?
@@ -30,22 +34,48 @@ ClassDeclaration ::= JCLASS ClassNameDefinition ClassBody {
 }
 
 ClassNameDefinition ::= identifier {
-	mixin="ge.freeuni.jack.language.psi.impl.JackNamedElementImpl"
 	implements="ge.freeuni.jack.language.psi.JackNamedElement"
-	methods=[getClassName getNameIdentifier setName]
+	mixin="ge.freeuni.jack.language.psi.impl.JackClassNameDefinitionMixin"
+	stubClass="ge.freeuni.jack.language.stub.impl.JackClassNameDefStub"
+	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
 }
-ClassBody ::= LBRACE Property* RBRACE {pin=1}
+ClassBody ::= LBRACE Property* Func* RBRACE {pin=1}
 
-Property ::= (static | field) Type identifier SEMICOLON {
+Property ::= (static | field) Type PropertyDefinition SEMICOLON {
 	pin=1
-	recoverWhile=PropertyRecovery
+//	recoverWhile=PropertyRecovery
 }
+//private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
+
 private Type ::= PrimitiveType | ReferenceType
+
 PrimitiveType ::= (int | boolean | char)
+
 ReferenceType ::= identifier {
-	mixin="ge.freeuni.jack.language.psi.impl.JackNamedElementImpl"
+	methods=[setName getReference resolve]
+}
+PropertyDefinition ::= identifier {
 	implements="ge.freeuni.jack.language.psi.JackNamedElement"
-	methods=[setName getClassName getNameIdentifier]
+	mixin="ge.freeuni.jack.language.psi.impl.JackPropertyDefinitionMixin"
+	stubClass="ge.freeuni.jack.language.stub.impl.JackPropertyDefinitionStub"
+	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
 }
 
-private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
+
+Func ::= (function | method | constructor) ReturnType FuncNameDefinition FuncParams FuncBody{
+	 pin=1
+}
+private ReturnType ::= PrimitiveRetType | ReferenceType
+PrimitiveRetType ::= (int | boolean | char | void)
+
+FuncNameDefinition ::= identifier 
+
+FuncParams ::= LPAREN RPAREN { pin=1 }
+FuncBody ::= LBRACE LocalVars* Stmt* RBRACE { pin=1 }
+
+LocalVars ::= var Type PropertyDefinition SEMICOLON {pin=1} 
+
+Stmt ::= let VarReference {pin=1}
+VarReference ::= identifier {
+	methods=[setName resolve getReference]
+}

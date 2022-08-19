@@ -21,7 +21,7 @@ class JackLineMarkerProvider: RelatedItemLineMarkerProvider() {
                 val builder = NavigationGutterIconBuilder.create(JackIcons.FILE)
                     .setTargets(jclass)
                     .setTooltipText("Navigate to class declaration")
-                result.add(builder.createLineMarkerInfo(element))
+                result.add(builder.createLineMarkerInfo(element.firstChild))
             }
         }
     }
