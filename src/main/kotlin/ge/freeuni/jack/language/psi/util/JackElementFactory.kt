@@ -3,12 +3,9 @@ package ge.freeuni.jack.language.psi.util
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.JackFileType
-import ge.freeuni.jack.language.psi.JackClassDeclaration
-import ge.freeuni.jack.language.psi.JackClassNameDefinition
-import ge.freeuni.jack.language.psi.JackFile
-import ge.freeuni.jack.language.psi.JackPropertyDefinition
-import ge.freeuni.jack.language.psi.JackReferenceType
+import ge.freeuni.jack.language.psi.*
 import ge.freeuni.jack.language.stub.impl.JackClassNameDefStub
 import ge.freeuni.jack.language.stub.type.JackClassNameDefStubElementType
 import ge.freeuni.jack.language.stub.type.JackPropertyDefinitionStubElementType
@@ -68,6 +65,26 @@ object JackElementFactory {
             }
         }
         throw RuntimeException("dummy file with single property couldn't be created")
+    }
+
+    fun createMethod(text: String, project: Project): JackFunc {
+        val file = createFileWithMethod(text, project)
+        val optClass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java)
+        optClass?.let { jclass ->
+            val func = jclass.classBody?.funcList?.get(0)
+            if (func != null) {
+                return func
+            }
+        }
+        throw RuntimeException("couldn't create dummy function")
+    }
+
+    private fun createFileWithMethod(text: String, project: Project): JackFile {
+        val filename = "dummy.jack"
+        val classDecl = "class Dummy { $text }"
+        return PsiFileFactory.getInstance(project)
+            .createFileFromText(filename, JackFileType.INSTANCE, classDecl)
+                as JackFile
     }
 }
 //@JvmStatic
