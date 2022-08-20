@@ -5,14 +5,9 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.TokenType
-import ge.freeuni.jack.language.psi.JackFile
 import ge.freeuni.jack.language.psi.JackTypes
 
 class JackKeywordCompletionContributor : CompletionContributor() {
@@ -29,8 +24,8 @@ class JackKeywordCompletionContributor : CompletionContributor() {
     }
 
     init {
-        registerStandardCompletion(fieldPattern(), false, FIELD, STATIC)
-        registerStandardCompletion(intPattern(), false, INT, CHAR, BOOLEAN)
+        registerStandardCompletion(propertyPattern(), false, FIELD, STATIC)
+        registerStandardCompletion(propertyTypePattern(), false, INT, CHAR, BOOLEAN)
     }
 
 
@@ -49,17 +44,18 @@ class JackKeywordCompletionContributor : CompletionContributor() {
         private const val SEMICOLON = ";"
 
 
-        fun fieldPattern(): PsiElementPattern.Capture<PsiElement> {
-            return psiElement().andOr(
-                psiElement().insideStarting(
-                    psiElement().whitespaceCommentOrError()),
-                psiElement().afterLeaf(psiElement( JackTypes.SEMICOLON))
+        fun propertyPattern(): PsiElementPattern.Capture<PsiElement> {
+            return  psiElement().andOr(
+                psiElement().afterLeaf(psiElement(JackTypes.SEMICOLON)),
+                psiElement().afterLeaf(psiElement(JackTypes.LBRACE))
             )
-
         }
 
-        fun intPattern(): PsiElementPattern.Capture<PsiElement> {
-            return psiElement().afterLeaf(psiElement(JackTypes.FIELD))
+        fun propertyTypePattern(): PsiElementPattern.Capture<PsiElement> {
+            return psiElement().andOr(
+                psiElement().afterLeaf(psiElement(JackTypes.FIELD)),
+                psiElement().afterLeaf(psiElement(JackTypes.STATIC))
+            )
         }
 
     }

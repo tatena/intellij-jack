@@ -50,6 +50,36 @@
         <lang.braceMatcher 
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackBraceMatcher"/>
+        
+        <annotator
+            language="Jack"
+            implementationClass="ge.freeuni.jack.language.annotator.JackAnnotator"/>
+
+        <codeInsight.lineMarkerProvider
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackLineMarkerProvider"/>
+    
+        <lang.findUsagesProvider
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFindUsagesProvider"/>
+
+        <lang.refactoringSupport
+                language="Jack"
+                implementationClass="ge.freeuni.jack.language.reference.JackRefactoringSupportProvider"/>
+
+        <stubIndex implementation="ge.freeuni.jack.language.stub.JackClassNameIndex"/>
+
+        <lang.foldingBuilder
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFoldingBuilder"/>
+        
+        <gotoSymbolContributor implementation="ge.freeuni.jack.editor.JackChooseByNameContributor"/>
+        <lang.formatter
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFormattingModelBuilder"/>
+
+
+        <stubElementTypeHolder class="ge.freeuni.jack.language.psi.JackTypes"/>
     </extensions>
 
     <actions>
