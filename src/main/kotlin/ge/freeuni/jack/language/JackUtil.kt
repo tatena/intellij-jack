@@ -19,8 +19,8 @@ object JackUtil {
             if (file != null) {
                 val jackClass = PsiTreeUtil.getChildOfType(file, JackClassDeclaration::class.java)
                 jackClass?.let { jclass ->
-                    val def = jclass.classNameDefinition 
-                    def?.let { 
+                    val def = jclass.classNameDefinition
+                    def?.let {
                         res.add(def)
                     }
                 }
@@ -28,10 +28,10 @@ object JackUtil {
         }
         return res
     }
-    
+
     @JvmStatic
     fun findClass(project: Project, name: String): JackClassDeclaration? {
-        
+
         val vFiles = FileTypeIndex.getFiles(JackFileType.INSTANCE, GlobalSearchScope.allScope(project))
         for (virtualFile in vFiles) {
             val file = PsiManager.getInstance(project).findFile(virtualFile) as? JackFile
@@ -53,22 +53,23 @@ object JackUtil {
             parent = parent.parent
         }
         return parent as JackClassBody
-    } 
+    }
+
     fun findClassProps(varRef: JackVarReference): List<JackProperty> {
         return getBody(varRef).propertyList
     }
+//
+//    fun findStatements(elem: JackVarReference): List<JackStatement> {
+//        val funcs = getBody(elem).funcList
+//        val res = arrayListOf<JackStmt>()
+//        for (func in funcs) {
+//            func.funcBody?.let { funcBody ->
+//                res.addAll(funcBody.stmtList)
+//            }
+//        }
+//        return res
+//    }
 
-    fun findStatements(elem: JackVarReference): List<JackStmt> {
-        val funcs = getBody(elem).funcList
-        val res = arrayListOf<JackStmt>()
-        for (func in funcs) {
-             func.funcBody?.let { funcBody ->
-                 res.addAll(funcBody.stmtList)
-             }
-        }
-        return res
-    }
-    
 
     fun findLocalProps(elem: JackVarReference): List<JackLocalVars> {
         return getFuncBody(elem).localVarsList
@@ -80,5 +81,17 @@ object JackUtil {
             parent = parent.parent
         }
         return parent as JackFuncBody
+    }
+
+    private fun getFuncParams(elem: JackVarReference): JackFuncParams? {
+        var parent = elem.parent
+        while (parent !is JackFunc) {
+            parent = parent.parent
+        }
+        return (parent as JackFunc).funcParams
+    }
+
+    fun findParamProps(elem: JackVarReference): List<JackPropertyDefinition> {
+        return getFuncParams(elem)?.propertyDefinitionList ?: listOf()
     }
 }

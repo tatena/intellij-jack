@@ -27,8 +27,9 @@ class JackFormattingBlock(
 
     override fun getChildIndent(): Indent? {
         return when(node.elementType) {
-            JackTypes.FUNC_BODY, 
-            JackTypes.CLASS_BODY -> Indent.getNormalIndent()
+            JackTypes.FUNC_BODY, JackTypes.CLASS_BODY, JackTypes.IF_BODY, 
+            JackTypes.ELSE_BODY, JackTypes.WHILE_BODY ->
+                Indent.getNormalIndent()
             else -> Indent.getNoneIndent()
         }
     }
@@ -60,7 +61,7 @@ class JackFormattingBlock(
 
     private fun calcIndent(type: IElementType): Indent {
         return when (type) {
-            JackTypes.LOCAL_VARS, JackTypes.STMT,
+            JackTypes.LOCAL_VARS, JackTypes.STATEMENT,
             JackTypes.PROPERTY, JackTypes.FUNC -> Indent.getNormalIndent()
             else -> Indent.getNoneIndent()
         }

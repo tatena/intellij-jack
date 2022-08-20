@@ -62,7 +62,7 @@ object JackElementFactory {
         val optBody = classDecl.classBody
         
         optBody?.let { body -> 
-            val prop = body.propertyList[0].propertyDefinition
+            val prop = body.propertyList[0].propertyDefinitionList[0]
             if (prop != null) {
                 return prop
             }

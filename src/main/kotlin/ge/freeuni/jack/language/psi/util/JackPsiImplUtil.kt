@@ -40,22 +40,24 @@ object JackPsiImplUtil {
         }
         return element
     }
+
     @JvmStatic
     fun getNameIdentifier(element: JackClassNameDefinition): PsiElement? {
         return element.node.findChildByType(JackTypes.IDENTIFIER)?.psi
     }
+
     @JvmStatic
     fun setName(elem: JackReferenceType, name: String): PsiElement {
         val e: JackReferenceType = JackElementFactory.createPropertyFromText(elem.project, name)
         elem.replace(e)
         return elem
-    } 
-    
+    }
+
     @JvmStatic
     fun getReference(elem: JackReferenceType): JackReferenceBase {
         val myText = elem.identifier.text
         val myRes = OrderedSet<PsiElement>()
-        return object: JackReferenceBase(elem, TextRange(0, elem.textLength)) {
+        return object : JackReferenceBase(elem, TextRange(0, elem.textLength)) {
             override fun handleElementRename(newElementName: String): PsiElement? {
                 return when (val currentElement = element) {
                     is JackReferenceType -> setName(currentElement, newElementName)
@@ -81,7 +83,7 @@ object JackPsiImplUtil {
             }
         }
     }
-    
+
     @JvmStatic
     fun setName(elem: JackVarReference, name: String): PsiElement {
         val e: JackPropertyDefinition = JackElementFactory.createPropertyDefinition(elem.project, name)
@@ -93,7 +95,7 @@ object JackPsiImplUtil {
     fun getReference(elem: JackVarReference): JackReferenceBase {
         val myText = elem.identifier.text
         val myRes = OrderedSet<PsiElement>()
-        return object: JackReferenceBase(elem, TextRange(0, elem.textLength)) {
+        return object : JackReferenceBase(elem, TextRange(0, elem.textLength)) {
             override fun handleElementRename(newElementName: String): PsiElement? {
                 return when (val currentElement = element) {
                     is JackVarReference -> setName(currentElement, newElementName)
@@ -110,22 +112,32 @@ object JackPsiImplUtil {
 
             override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
                 var isLocal = false
+                var isParam = false
                 val localProps = JackUtil.findLocalProps(elem)
                 for (prop in localProps) {
-                    prop.propertyDefinition?.let { def ->
+                    for (def in prop.propertyDefinitionList) {
                         if (def.textMatches(myText)) {
                             myRes.add(def)
                             isLocal = true
                         }
                     }
                 }
-                if (isLocal) {
-                    return myRes
-                }
+                if (isLocal) return myRes
                 
+                
+                val paramProps = JackUtil.findParamProps(elem)
+                for (def in paramProps) {
+                        if (def.textMatches(myText)) {
+                            myRes.add(def)
+                            isParam = true
+                        }
+                }
+                if (isParam) return myRes
+                
+
                 val props = JackUtil.findClassProps(elem)
                 for (prop in props) {
-                    prop.propertyDefinition?.let { def ->
+                    for (def in prop.propertyDefinitionList) {
                         if (def.textMatches(myText)) {
                             myRes.add(def)
                         }
@@ -135,13 +147,12 @@ object JackPsiImplUtil {
             }
         }
     }
-    
+
     @JvmStatic
     fun resolve(elem: JackReferenceType): PsiElement? {
         return elem.reference.resolve()
     }
-    
-    
+
 
     @JvmStatic
     fun resolve(elem: JackVarReference): PsiElement? {
