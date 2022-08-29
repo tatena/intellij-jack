@@ -86,12 +86,25 @@
         <action id="Jack.NewFile" class="ge.freeuni.jack.action.JackCreateFileAction">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
+        
+        <action class="ge.freeuni.jack.editor.generate.GenerateConstructorAction"
+                id="Jack.GenerateConstructor"
+                text="Constructor">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
 
         <action class="ge.freeuni.jack.editor.generate.GenerateGetterAction"
                 id="Jack.GenerateGetter"
-                text="Getter"
-                description="Getters">
+                text="Getter">
             <add-to-group group-id="GenerateGroup"/>
         </action>
+        
+        <action class="ge.freeuni.jack.editor.generate.GenerateSetterAction"
+                id="Jack.GenerateSetter"
+                text="Setter">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
+
     </actions>
 </idea-plugin>

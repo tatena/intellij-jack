@@ -61,10 +61,15 @@ ClassNameDefinition ::= identifier {
 }
 ClassBody ::= LBRACE Property* Func* RBRACE {pin=1}
 
-Property ::= (static | field) Type PropertyDefinition DefinitionTail* SEMICOLON {
+Property ::= PropertyScope Type PropertyDefinition DefinitionTail* SEMICOLON {
 	pin=1
 //	recoverWhile=PropertyRecovery
+	methods=[getType]
 }
+PropertyScope ::= static | field {
+	methods=[getScope]
+}
+
 //private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
 
 private Type ::= PrimitiveType | ReferenceType
@@ -106,7 +111,7 @@ Statement ::= LetStatement
 		| WhileStatement 
 		| ReturnStatement
 
-LetStatement ::= let (VarReference | IndexGroup) EQ Expr SEMICOLON {pin=1}
+LetStatement ::= let (ThisExpr | IndexExpr | ReferenceExpr) EQ Expr SEMICOLON {pin=1}
 DoStatement ::= do Expr SEMICOLON {pin=1}
 IfStatement ::= if LPAREN Expr RPAREN IfBody ElseStatement? {pin=1}
 ElseStatement ::= else ElseBody {pin=1}
@@ -139,7 +144,8 @@ private CalcPrefixGroup ::= UnaryMinusExpr | UnaryNotExpr
 private CallGroup ::= CallExpr
 private AccessGroup ::= AccessExpr
 private IndexGroup ::= IndexExpr
-private PrimaryGroup ::=  LiteralExpr | ParenExpr | ReferenceExpr
+private PrimaryGroup ::=  LiteralExpr | ParenExpr | ReferenceExpr | ThisExpr
+
 
 EqualExpr ::= Expr EQ Expr
 LessExpr ::= Expr LT Expr
@@ -151,6 +157,7 @@ MinusExpr ::= Expr MINUS Expr
 MulExpr ::= Expr MUL Expr 
 DivExpr ::= Expr DIV Expr 
 CallExpr ::= Expr CallParams
+ThisExpr ::= this (DOT VarReference)? {pin=1}
 IndexExpr ::= Expr IndexParams
 AccessExpr ::= Expr DOT Expr 
 UnaryMinusExpr ::= MINUS Expr  {pin = 1}

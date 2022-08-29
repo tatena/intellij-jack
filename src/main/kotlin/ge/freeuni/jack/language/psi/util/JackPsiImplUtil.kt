@@ -4,6 +4,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import com.intellij.util.containers.OrderedSet
 import ge.freeuni.jack.language.JackIcons
 import ge.freeuni.jack.language.JackUtil
@@ -11,6 +12,7 @@ import ge.freeuni.jack.language.psi.JackClassDeclaration
 import ge.freeuni.jack.language.psi.JackClassNameDefinition
 import ge.freeuni.jack.language.psi.JackProperty
 import ge.freeuni.jack.language.psi.JackPropertyDefinition
+import ge.freeuni.jack.language.psi.JackPropertyScope
 import ge.freeuni.jack.language.psi.JackReferenceType
 import ge.freeuni.jack.language.psi.JackTypes
 import ge.freeuni.jack.language.psi.JackVarReference
@@ -24,6 +26,24 @@ object JackPsiImplUtil {
 
         val name = node?.findChildByType(JackTypes.IDENTIFIER)?.text
         return name
+    }
+    
+    @JvmStatic 
+    fun getScope(scope: JackPropertyScope): String {
+        return when {
+            scope.field != null -> "method"
+            scope.static != null -> "function"
+            else -> throw RuntimeException("invalid scope for given property")
+        }
+    }
+    
+    @JvmStatic
+    fun getType(prop: JackProperty): String {
+        return when {
+            prop.primitiveType != null -> prop.primitiveType!!.text
+            prop.referenceType != null -> prop.referenceType!!.text
+            else -> throw RuntimeException("unresolved type for property")
+        }
     }
 //    
 //    fun getClassName(property: JackClassNameDefinition): String? {
@@ -111,30 +131,41 @@ object JackPsiImplUtil {
             }
 
             override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
-                var isLocal = false
-                var isParam = false
-                val localProps = JackUtil.findLocalProps(elem)
-                for (prop in localProps) {
-                    for (def in prop.propertyDefinitionList) {
-                        if (def.textMatches(myText)) {
-                            myRes.add(def)
-                            isLocal = true
-                        }
+                var fullRef = true
+                
+                val prevDot = elem.prevSibling
+                if (prevDot != null && prevDot.elementType == JackTypes.DOT) {
+                    val prevThis = prevDot.prevSibling
+                    if (prevThis != null && prevThis.elementType == JackTypes.THIS) {
+                        fullRef = false
                     }
                 }
-                if (isLocal) return myRes
                 
-                
-                val paramProps = JackUtil.findParamProps(elem)
-                for (def in paramProps) {
+                if (fullRef) {
+                    var isLocal = false
+                    var isParam = false
+                    val localProps = JackUtil.findLocalProps(elem)
+                    for (prop in localProps) {
+                        for (def in prop.propertyDefinitionList) {
+                            if (def.textMatches(myText)) {
+                                myRes.add(def)
+                                isLocal = true
+                            }
+                        }
+                    }
+                    if (isLocal) return myRes
+
+
+                    val paramProps = JackUtil.findParamProps(elem)
+                    for (def in paramProps) {
                         if (def.textMatches(myText)) {
                             myRes.add(def)
                             isParam = true
                         }
-                }
-                if (isParam) return myRes
-                
+                    }
+                    if (isParam) return myRes
 
+                }
                 val props = JackUtil.findClassProps(elem)
                 for (prop in props) {
                     for (def in prop.propertyDefinitionList) {

@@ -2,7 +2,6 @@ package ge.freeuni.jack.language.psi.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.JackFileType
 import ge.freeuni.jack.language.psi.*
@@ -67,21 +66,22 @@ object JackElementFactory {
         throw RuntimeException("dummy file with single property couldn't be created")
     }
 
-    fun createMethod(text: String, project: Project): JackFunc {
+    fun createMethods(text: List<String>, project: Project): List<JackFunc> {
         val file = createFileWithMethod(text, project)
-        val optClass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java)
-        optClass?.let { jclass ->
-            val func = jclass.classBody?.funcList?.get(0)
-            if (func != null) {
-                return func
-            }
-        }
-        throw RuntimeException("couldn't create dummy function")
+        val jclass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java)
+        return jclass?.classBody?.funcList ?: listOf()
     }
 
-    private fun createFileWithMethod(text: String, project: Project): JackFile {
+    private fun createFileWithMethod(text: List<String>, project: Project): JackFile {
         val filename = "dummy.jack"
-        val classDecl = "class Dummy { $text }"
+//        var classDecl = "class Dummy {\n"
+//        text.forEach {
+//            println(it)
+//            classDecl += it
+//        }
+//        classDecl += "\n}"
+//        
+        val classDecl = "class Dummy { ${text.reduce { acc, s -> acc + s }} }"
         return PsiFileFactory.getInstance(project)
             .createFileFromText(filename, JackFileType.INSTANCE, classDecl)
                 as JackFile
@@ -92,4 +92,8 @@ fun factory(name: String): JackStubElementType<*, *> = when(name) {
     "CLASS_NAME_DEFINITION" -> JackClassNameDefStubElementType(name)
     "PROPERTY_DEFINITION" -> JackPropertyDefinitionStubElementType(name)
     else -> throw RuntimeException("Unknown element type: $name")
+}
+
+inline fun<T> T?.guard(nullClause: () -> Nothing): T {
+    return this ?: nullClause()
 }
