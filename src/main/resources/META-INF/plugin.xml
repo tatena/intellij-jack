@@ -14,7 +14,7 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Jack language support plugin, designed for helping with nand2tetris language 
+    Jack language support plugin, designed for helping with nand2tetris language
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -47,10 +47,10 @@
                 language="Jack"
                 implementationClass="ge.freeuni.jack.language.completion.JackKeywordCompletionContributor"/>
 
-        <lang.braceMatcher 
+        <lang.braceMatcher
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackBraceMatcher"/>
-        
+
         <annotator
             language="Jack"
             implementationClass="ge.freeuni.jack.language.annotator.JackAnnotator"/>
@@ -58,7 +58,7 @@
         <codeInsight.lineMarkerProvider
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackLineMarkerProvider"/>
-    
+
         <lang.findUsagesProvider
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackFindUsagesProvider"/>
@@ -72,7 +72,7 @@
         <lang.foldingBuilder
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackFoldingBuilder"/>
-        
+
         <gotoSymbolContributor implementation="ge.freeuni.jack.editor.JackChooseByNameContributor"/>
         <lang.formatter
                 language="Jack"
@@ -80,13 +80,37 @@
 
 
         <stubElementTypeHolder class="ge.freeuni.jack.language.psi.JackTypes"/>
+
+        <moduleType id="JACK_MODULE" implementationClass="ge.freeuni.jack.ide.newProject.JackModuleType"/>
+        <moduleBuilder builderClass="ge.freeuni.jack.ide.newProject.JackModuleBuilder"/>
+        <projectService serviceInterface="ge.freeuni.jack.project.settings.JackProjectSettingsService"
+                        serviceImplementation="ge.freeuni.jack.project.settings.JackProjectSettingsServiceImpl"/>
+
+
     </extensions>
+
+    <extensions defaultExtensionNs="ge.freeuni">
+
+
+        <toolchainProvider implementation="ge.freeuni.jack.toolchain.JackLocalToolChainProvider"/>
+    </extensions>
+
+    <extensionPoints>
+
+        <extensionPoint qualifiedName="ge.freeuni.toolchainProvider"
+                        interface="ge.freeuni.jack.toolchain.JackToolChainProvider"
+                        dynamic="true"/>
+        <extensionPoint qualifiedName="ge.freeuni.toolchainFlavor"
+                        interface="ge.freeuni.jack.toolchain.flavors.JackToolChainFlavor"
+                        dynamic="true"/>
+
+    </extensionPoints>
 
     <actions>
         <action id="Jack.NewFile" class="ge.freeuni.jack.action.JackCreateFileAction">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
-        
+
         <action class="ge.freeuni.jack.editor.generate.GenerateConstructorAction"
                 id="Jack.GenerateConstructor"
                 text="Constructor">
@@ -98,7 +122,7 @@
                 text="Getter">
             <add-to-group group-id="GenerateGroup"/>
         </action>
-        
+
         <action class="ge.freeuni.jack.editor.generate.GenerateSetterAction"
                 id="Jack.GenerateSetter"
                 text="Setter">
