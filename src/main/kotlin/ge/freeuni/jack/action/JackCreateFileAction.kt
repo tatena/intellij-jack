@@ -8,7 +8,7 @@ import ge.freeuni.jack.language.JackIcons
 
 class JackCreateFileAction: CreateFileFromTemplateAction(ACTION_NAME, "Creates new class", JackIcons.FILE) {
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
-        builder.setTitle(ACTION_NAME).addKind("Class", JackIcons.FILE, ACTION_NAME)
+        builder.setTitle("New $ACTION_NAME").addKind("Class", JackIcons.FILE, ACTION_NAME)
     }
 
     override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String = ACTION_NAME

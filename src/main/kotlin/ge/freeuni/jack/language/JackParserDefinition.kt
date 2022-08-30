@@ -14,11 +14,16 @@ import com.intellij.psi.tree.TokenSet
 import ge.freeuni.jack.language.parser.JackParser
 import ge.freeuni.jack.language.psi.JackFile
 import ge.freeuni.jack.language.psi.JackTypes
+import ge.freeuni.jack.language.psi.type.JackTokenType
 
 class JackParserDefinition : ParserDefinition {
-    val FILE = IFileElementType(JackLanguage.INSTANCE)
-    val WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE)
-
+    companion object {
+        
+        @JvmField val FILE = IFileElementType(JackLanguage.INSTANCE)
+        @JvmField val WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE)
+        @JvmField val LINE_COMMENT = JackTokenType("<LINE_COMMENT>")
+        @JvmField val BLOCK_COMMENT = JackTokenType("<BLOCK_COMMENT>")
+    }
 
     override fun createLexer(project: Project?): Lexer {
         return JackLexerAdapter()
@@ -33,11 +38,11 @@ class JackParserDefinition : ParserDefinition {
     }
 
     override fun getCommentTokens(): TokenSet {
-        return TokenSet.EMPTY
+        return TokenSet.create(LINE_COMMENT, BLOCK_COMMENT)
     }
 
     override fun getStringLiteralElements(): TokenSet {
-        return TokenSet.EMPTY
+        return TokenSet.create(JackTypes.STRING)
     }
 
     override fun createElement(node: ASTNode?): PsiElement {

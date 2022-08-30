@@ -51,14 +51,84 @@
                 language="Jack"
                 implementationClass="ge.freeuni.jack.editor.JackBraceMatcher"/>
 
+        <annotator
+            language="Jack"
+            implementationClass="ge.freeuni.jack.language.annotator.JackAnnotator"/>
+
+        <codeInsight.lineMarkerProvider
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackLineMarkerProvider"/>
+
+        <lang.findUsagesProvider
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFindUsagesProvider"/>
+
+        <lang.refactoringSupport
+                language="Jack"
+                implementationClass="ge.freeuni.jack.language.reference.JackRefactoringSupportProvider"/>
+
+        <stubIndex implementation="ge.freeuni.jack.language.stub.JackClassNameIndex"/>
+
+        <lang.foldingBuilder
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFoldingBuilder"/>
+
+        <gotoSymbolContributor implementation="ge.freeuni.jack.editor.JackChooseByNameContributor"/>
+        <lang.formatter
+                language="Jack"
+                implementationClass="ge.freeuni.jack.editor.JackFormattingModelBuilder"/>
+
+
+        <stubElementTypeHolder class="ge.freeuni.jack.language.psi.JackTypes"/>
+
         <moduleType id="JACK_MODULE" implementationClass="ge.freeuni.jack.ide.newProject.JackModuleType"/>
         <moduleBuilder builderClass="ge.freeuni.jack.ide.newProject.JackModuleBuilder"/>
+        <projectService serviceInterface="ge.freeuni.jack.project.settings.JackProjectSettingsService"
+                        serviceImplementation="ge.freeuni.jack.project.settings.JackProjectSettingsServiceImpl"/>
+
 
     </extensions>
+
+    <extensions defaultExtensionNs="ge.freeuni">
+
+
+        <toolchainProvider implementation="ge.freeuni.jack.toolchain.JackLocalToolChainProvider"/>
+    </extensions>
+
+    <extensionPoints>
+
+        <extensionPoint qualifiedName="ge.freeuni.toolchainProvider"
+                        interface="ge.freeuni.jack.toolchain.JackToolChainProvider"
+                        dynamic="true"/>
+        <extensionPoint qualifiedName="ge.freeuni.toolchainFlavor"
+                        interface="ge.freeuni.jack.toolchain.flavors.JackToolChainFlavor"
+                        dynamic="true"/>
+
+    </extensionPoints>
 
     <actions>
         <action id="Jack.NewFile" class="ge.freeuni.jack.action.JackCreateFileAction">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
+
+        <action class="ge.freeuni.jack.editor.generate.GenerateConstructorAction"
+                id="Jack.GenerateConstructor"
+                text="Constructor">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
+        <action class="ge.freeuni.jack.editor.generate.GenerateGetterAction"
+                id="Jack.GenerateGetter"
+                text="Getter">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
+        <action class="ge.freeuni.jack.editor.generate.GenerateSetterAction"
+                id="Jack.GenerateSetter"
+                text="Setter">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
+
     </actions>
 </idea-plugin>
