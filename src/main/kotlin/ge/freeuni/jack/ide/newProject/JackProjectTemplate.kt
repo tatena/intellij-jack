@@ -1,16 +1,14 @@
 package ge.freeuni.jack.ide.newProject
 
-import com.intellij.facet.ui.ValidationResult
 import com.intellij.openapi.util.NlsContexts
 import ge.freeuni.jack.language.JackIcons
 import javax.swing.Icon
 
 
-sealed class JackProjectTemplate(@Suppress("UnstableApiUsage") @NlsContexts.ListItem val name: String, val icon: Icon) {
-    fun validateProjectName(crateName: String): String? =  null
-}
+sealed class JackProjectTemplate(@Suppress("UnstableApiUsage") @NlsContexts.ListItem val name: String, val icon: Icon)
 
-sealed class JackGenericTemplate(@Suppress("UnstableApiUsage") @NlsContexts.ListItem name: String) : JackProjectTemplate(name, JackIcons.FILE) {
+sealed class JackGenericTemplate(@Suppress("UnstableApiUsage") @NlsContexts.ListItem name: String) :
+    JackProjectTemplate(name, JackIcons.FILE) {
     object JackProject : JackGenericTemplate("Jack project")
 }
 

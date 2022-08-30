@@ -7,7 +7,6 @@ import java.nio.file.Path
 
 class JackLocalToolChainProvider : JackToolChainProvider {
     override fun getToolchain(homePath: Path): JackToolchainBase? {
-//        if (SystemInfo.isWindows && WslPath.isWslUncPath(homePath.toString())) return null
         return JackLocalToolchain(homePath)
     }
 }

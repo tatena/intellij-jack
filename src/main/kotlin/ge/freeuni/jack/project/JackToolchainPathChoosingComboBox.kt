@@ -44,7 +44,6 @@ class JackToolchainPathChoosingComboBox(onTextChanged: () -> Unit = {}) :
         childComponent.isEditable = true
 
         addActionListener {
-            // Select directory with Jack tools
             val descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
             FileChooser.chooseFile(descriptor, null, null) { file ->
                 childComponent.selectedItem = file.pathAsPath
