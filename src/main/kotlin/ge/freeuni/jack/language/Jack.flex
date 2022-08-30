@@ -77,6 +77,7 @@ BLOCK_COMMENT = "/*" !([^]* "*/" [^]*) ("*/")?
       "["  { return JackTypes.LBRACK;}
       "]"  { return JackTypes.RBRACK;}
       "."  { return JackTypes.DOT;}
+      "this" {return JackTypes.THIS; }
       
       {LINE_COMMENT} { return JackParserDefinition.LINE_COMMENT; }
       {BLOCK_COMMENT} { return JackParserDefinition.BLOCK_COMMENT; }

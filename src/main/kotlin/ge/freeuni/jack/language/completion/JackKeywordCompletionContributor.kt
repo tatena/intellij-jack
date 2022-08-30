@@ -8,6 +8,7 @@ import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
+import com.intellij.psi.TokenType
 import ge.freeuni.jack.language.psi.JackTypes
 
 class JackKeywordCompletionContributor : CompletionContributor() {
@@ -26,6 +27,12 @@ class JackKeywordCompletionContributor : CompletionContributor() {
     init {
         registerStandardCompletion(propertyPattern(), false, FIELD, STATIC)
         registerStandardCompletion(propertyTypePattern(), false, INT, CHAR, BOOLEAN)
+        
+        extend(CompletionType.BASIC, dotPattern(), JackThisCompletionProvider())
+    }
+
+    private fun dotPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement().withParent(psiElement(JackTypes.VAR_REFERENCE).afterLeaf(psiElement(JackTypes.DOT)))
     }
 
 

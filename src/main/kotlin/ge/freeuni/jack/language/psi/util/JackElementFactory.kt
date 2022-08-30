@@ -2,13 +2,9 @@ package ge.freeuni.jack.language.psi.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.JackFileType
-import ge.freeuni.jack.language.psi.JackClassDeclaration
-import ge.freeuni.jack.language.psi.JackClassNameDefinition
-import ge.freeuni.jack.language.psi.JackFile
-import ge.freeuni.jack.language.psi.JackPropertyDefinition
-import ge.freeuni.jack.language.psi.JackReferenceType
+import ge.freeuni.jack.language.psi.*
 import ge.freeuni.jack.language.stub.impl.JackClassNameDefStub
 import ge.freeuni.jack.language.stub.type.JackClassNameDefStubElementType
 import ge.freeuni.jack.language.stub.type.JackPropertyDefinitionStubElementType
@@ -69,10 +65,35 @@ object JackElementFactory {
         }
         throw RuntimeException("dummy file with single property couldn't be created")
     }
+
+    fun createMethods(text: List<String>, project: Project): List<JackFunc> {
+        val file = createFileWithMethod(text, project)
+        val jclass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java)
+        return jclass?.classBody?.funcList ?: listOf()
+    }
+
+    private fun createFileWithMethod(text: List<String>, project: Project): JackFile {
+        val filename = "dummy.jack"
+//        var classDecl = "class Dummy {\n"
+//        text.forEach {
+//            println(it)
+//            classDecl += it
+//        }
+//        classDecl += "\n}"
+//        
+        val classDecl = "class Dummy { ${text.reduce { acc, s -> acc + s }} }"
+        return PsiFileFactory.getInstance(project)
+            .createFileFromText(filename, JackFileType.INSTANCE, classDecl)
+                as JackFile
+    }
 }
 //@JvmStatic
 fun factory(name: String): JackStubElementType<*, *> = when(name) {
     "CLASS_NAME_DEFINITION" -> JackClassNameDefStubElementType(name)
     "PROPERTY_DEFINITION" -> JackPropertyDefinitionStubElementType(name)
     else -> throw RuntimeException("Unknown element type: $name")
+}
+
+inline fun<T> T?.guard(nullClause: () -> Nothing): T {
+    return this ?: nullClause()
 }
