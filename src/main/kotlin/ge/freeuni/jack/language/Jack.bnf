@@ -9,26 +9,174 @@
   psiImplPackage="ge.freeuni.jack.language.psi.impl"
 
   elementTypeHolderClass="ge.freeuni.jack.language.psi.JackTypes"
-  elementTypeClass="ge.freeuni.jack.language.psi.JackElementType"
-  tokenTypeClass="ge.freeuni.jack.language.psi.JackTokenType"
+  elementTypeClass="ge.freeuni.jack.language.psi.type.JackElementType"
+  tokenTypeClass="ge.freeuni.jack.language.psi.type.JackTokenType"
 
   tokens=[
     SEMICOLON = ";"
     LBRACE = "{"
     RBRACE = "}"
+    JCLASS = "class"
+    LPAREN = "("
+    RPAREN = ")"
+    COMMA = ","
+    EQ = "="
+    NOT = "~"
+    AND = "&"
+    OR = "|"
+    LT = "<"
+    GT = ">"
+    PLUS = "+"
+    MINUS = "-"
+    MUL = "*"
+    DIV = "/"
+    LBRACK = "["
+    RBRACK = "]"
+    DOT = "."
   ]
+	extends(".*Expr")=Expr
 
+	generateTokenAccessors=true
+	psiImplUtilClass="ge.freeuni.jack.language.psi.util.JackPsiImplUtil"
+	
+	extends("EqualGroup|ConditionalGroup|SumGroup|ProductGroup")=BinaryExpr
+	
 }
 
 File ::= ClassDeclaration?
-ClassDeclaration ::= class ClassNameDefinition ClassBody {pin=1}
-
-ClassNameDefinition ::= identifier
-ClassBody ::= LBRACE Property* RBRACE {pin=1}
-
-Property ::= (static | field) (int | char | boolean) identifier SEMICOLON {
+ClassDeclaration ::= JCLASS ClassNameDefinition ClassBody {
 	pin=1
-	recoverWhile=PropertyRecovery
+	methods=[getClassName]
 }
 
-private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
+fake BinaryExpr ::= Expr+ {
+	methods=[left="Expression[0]" right="Expression[1]"]
+}
+
+ClassNameDefinition ::= identifier {
+	implements="ge.freeuni.jack.language.psi.JackNamedElement"
+	mixin="ge.freeuni.jack.language.psi.impl.JackClassNameDefinitionMixin"
+	stubClass="ge.freeuni.jack.language.stub.impl.JackClassNameDefStub"
+	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
+}
+ClassBody ::= LBRACE Property* Func* RBRACE {pin=1}
+
+Property ::= PropertyScope Type PropertyDefinition DefinitionTail* SEMICOLON {
+	pin=1
+//	recoverWhile=PropertyRecovery
+	methods=[getType]
+}
+PropertyScope ::= static | field {
+	methods=[getScope]
+}
+
+//private PropertyRecovery ::= !(static | field | int | char | boolean | identifier | SEMICOLON | RBRACE | LBRACE) 
+
+private Type ::= PrimitiveType | ReferenceType
+
+PrimitiveType ::= (int | boolean | char)
+
+ReferenceType ::= identifier {
+	methods=[setName getReference resolve]
+}
+PropertyDefinition ::= identifier {
+	implements="ge.freeuni.jack.language.psi.JackNamedElement"
+	mixin="ge.freeuni.jack.language.psi.impl.JackPropertyDefinitionMixin"
+	stubClass="ge.freeuni.jack.language.stub.impl.JackPropertyDefinitionStub"
+	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
+}
+
+
+Func ::= (function | method | constructor) ReturnType FuncNameDefinition FuncParams FuncBody{
+	 pin=1
+}
+private ReturnType ::= PrimitiveRetType | ReferenceType
+PrimitiveRetType ::= (int | boolean | char | void)
+
+FuncNameDefinition ::= identifier 
+
+FuncParams ::= LPAREN Params* RPAREN { pin=1 }
+
+private Params ::= Type PropertyDefinition Tail*
+
+private Tail ::= COMMA Type PropertyDefinition
+FuncBody ::= LBRACE LocalVars* Statement* RBRACE { pin=1 }
+
+LocalVars ::= var Type PropertyDefinition DefinitionTail* SEMICOLON {pin=1}
+private DefinitionTail ::= COMMA PropertyDefinition { pin=1 }
+
+Statement ::= LetStatement
+		| DoStatement
+		| IfStatement
+		| WhileStatement 
+		| ReturnStatement
+
+LetStatement ::= let (ThisExpr | IndexExpr | ReferenceExpr) EQ Expr SEMICOLON {pin=1}
+DoStatement ::= do Expr SEMICOLON {pin=1}
+IfStatement ::= if LPAREN Expr RPAREN IfBody ElseStatement? {pin=1}
+ElseStatement ::= else ElseBody {pin=1}
+WhileStatement ::= while LPAREN Expr RPAREN WhileBody {pin=1}
+ReturnStatement ::= return Expr? SEMICOLON {pin=1}
+
+IfBody ::= LBRACE Statement* RBRACE {pin=1}
+ElseBody ::= LBRACE Statement* RBRACE {pin=1}
+WhileBody ::= LBRACE Statement* RBRACE {pin=1}
+
+Expr ::= EqualGroup
+	   | ConditionalGroup
+	   | SumGroup
+	   | ProductGroup
+	   | LogicalGroup
+	   | CalcPrefixGroup
+	   | AccessGroup
+	   | CallGroup
+	   | IndexGroup
+	   | PrimaryGroup
+	   {extraRoot=true}
+
+
+private EqualGroup ::= EqualExpr 
+private ConditionalGroup ::= LessExpr | MoreExpr
+private SumGroup ::= PlusExpr | MinusExpr
+private ProductGroup ::= MulExpr | DivExpr
+private LogicalGroup ::= AndExpr | OrExpr
+private CalcPrefixGroup ::= UnaryMinusExpr | UnaryNotExpr
+private CallGroup ::= CallExpr
+private AccessGroup ::= AccessExpr
+private IndexGroup ::= IndexExpr
+private PrimaryGroup ::=  LiteralExpr | ParenExpr | ReferenceExpr | ThisExpr
+
+
+EqualExpr ::= Expr EQ Expr
+LessExpr ::= Expr LT Expr
+MoreExpr ::= Expr GT Expr
+AndExpr ::= Expr AND Expr
+OrExpr ::= Expr OR Expr 
+PlusExpr ::= Expr PLUS Expr 
+MinusExpr ::= Expr MINUS Expr 
+MulExpr ::= Expr MUL Expr 
+DivExpr ::= Expr DIV Expr 
+CallExpr ::= Expr CallParams
+ThisExpr ::= this (DOT VarReference)? {pin=1}
+IndexExpr ::= Expr IndexParams
+AccessExpr ::= Expr DOT Expr 
+UnaryMinusExpr ::= MINUS Expr  {pin = 1}
+ReferenceExpr ::= VarReference
+UnaryNotExpr ::= NOT Expr  {pin = 1}
+
+LiteralExpr ::= BoolLiteral | NumLiteral | StringLiteral
+ParenExpr ::= LPAREN Expr RPAREN {pin=1}
+BoolLiteral ::= true | false
+NumLiteral ::= integer
+StringLiteral ::= string
+
+CallParams ::= LPAREN Arguments? RPAREN {pin=1}
+IndexParams ::= LBRACK Arg RBRACK {pin=1}
+Arguments ::= Arg (COMMA Arg)*  {pin(".*")=1}
+Arg ::= Expr
+
+
+
+VarReference ::= identifier {
+	methods=[setName resolve getReference]
+}
