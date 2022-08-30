@@ -86,7 +86,8 @@
         <projectService serviceInterface="ge.freeuni.jack.project.settings.JackProjectSettingsService"
                         serviceImplementation="ge.freeuni.jack.project.settings.JackProjectSettingsServiceImpl"/>
 
-
+        <configurationType
+                implementation="ge.freeuni.jack.sdk.JackRunConfigurationType"/>
     </extensions>
 
     <extensions defaultExtensionNs="ge.freeuni">
