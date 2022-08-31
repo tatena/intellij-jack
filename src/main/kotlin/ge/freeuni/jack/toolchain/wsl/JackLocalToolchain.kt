@@ -1,11 +1,6 @@
 package ge.freeuni.jack.toolchain.wsl
 
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.io.FileUtil
-import ge.freeuni.jack.toolchain.JackToolchain
 import ge.freeuni.jack.toolchain.JackToolchainBase
-import java.io.File
 import java.nio.file.Path
 
 open class JackLocalToolchain(location: Path) : JackToolchainBase(location) {

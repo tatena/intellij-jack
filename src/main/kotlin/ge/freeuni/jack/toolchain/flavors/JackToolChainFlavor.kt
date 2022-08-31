@@ -12,9 +12,7 @@ abstract class JackToolChainFlavor {
 
     protected abstract fun getHomePathCandidates(): Sequence<Path>
 
-
     protected open fun isApplicable(): Boolean = true
-
 
     protected open fun isValidToolchainPath(path: Path): Boolean {
         if (!path.isDirectory()) {

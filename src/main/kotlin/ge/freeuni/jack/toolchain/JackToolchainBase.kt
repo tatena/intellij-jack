@@ -5,7 +5,6 @@ import java.nio.file.Path
 
 abstract class JackToolchainBase(val location: Path) {
 
-
     fun looksLikeValidToolchain(): Boolean = JackToolChainFlavor.getFlavor(location) != null
 
 }
