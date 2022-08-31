@@ -3,6 +3,7 @@
 package ge.freeuni.jack.ide.projectSettings
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.Panel
@@ -63,14 +64,17 @@ class JackProjectSettingsPanel : Disposable {
         versionUpdateDebouncer.run(
             onPooledThread = {
                 pathToToolchain?.let { JackToolChainProvider.getToolchain(it) }
-//                val rustc = toolchain?.rustc()
-//                val rustup = toolchain?.rustup
-//                val rustcVersion = rustc?.queryVersion()?.semver
-//                val stdlibLocation = rustc?.getStdlibFromSysroot(cargoProjectDir)?.presentableUrl
-//                Triple(rustcVersion, stdlibLocation, rustup != null)
             },
             onUiThread = {
             }
         )
+    }
+
+    @Throws(ConfigurationException::class)
+    fun validateSettings() {
+        val toolchain = data.toolchain ?: return
+        if (!toolchain.looksLikeValidToolchain()) {
+            throw ConfigurationException("Invalid tools path")
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.ide.wizard.AbstractWizard.isNewWizard
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.panel
@@ -66,5 +67,11 @@ class JackModuleWizardStep(
             border = JBUI.Borders.empty(14, 20)
         }
         return this
+    }
+
+    @Throws(ConfigurationException::class)
+    override fun validate(): Boolean {
+        newProjectPanel.validateSettings()
+        return true
     }
 }

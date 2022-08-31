@@ -86,15 +86,27 @@
         <projectService serviceInterface="ge.freeuni.jack.project.settings.JackProjectSettingsService"
                         serviceImplementation="ge.freeuni.jack.project.settings.JackProjectSettingsServiceImpl"/>
 
-        
+        <configurationType
+                implementation="ge.freeuni.jack.sdk.JackRunConfigurationType"/>
+
         <additionalLibraryRootsProvider implementation="ge.freeuni.jack.language.lib.JackLibraryProvider"/>
 
     </extensions>
 
     <extensions defaultExtensionNs="ge.freeuni">
 
+        <toolchainFlavor id="jack.jackUpToolchainFlavor"
+                         implementation="ge.freeuni.jack.toolchain.flavors.JackUpToolChainFlavor"
+                         order="first"/>
+
+
+        <toolchainFlavor id="jack.jackToolchainFlavor"
+                         implementation="ge.freeuni.jack.toolchain.flavors.JackMacToolChainFlavor"
+                         order="first"/>
 
         <toolchainProvider implementation="ge.freeuni.jack.toolchain.JackLocalToolChainProvider"/>
+
+
     </extensions>
 
     <extensionPoints>
@@ -118,7 +130,7 @@
                 text="Constructor">
             <add-to-group group-id="GenerateGroup"/>
         </action>
-        
+
         <action class="ge.freeuni.jack.editor.generate.GenerateDisposeAction"
                 id="Jack.GenerateDispose"
                 text="Dispose">
