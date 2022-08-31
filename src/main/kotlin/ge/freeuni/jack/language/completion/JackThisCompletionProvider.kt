@@ -25,14 +25,12 @@ class JackThisCompletionProvider : CompletionProvider<CompletionParameters>() {
                             .create(def.identifier.text)
                             .withCaseSensitivity(false)
                             .withTypeText(item.type)
-                            .withIcon(JackIcons.FILE)
+                            .withIcon(JackIcons.resolveProperty(item.propertyScope.scope))
                     )
                 }
             }
             
         }
-        val lookup = LookupElementBuilder.create("BaroDZmao").withCaseSensitivity(false)
-        result.addElement(lookup)
     }
 
 }

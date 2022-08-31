@@ -17,14 +17,18 @@ import ge.freeuni.jack.language.JackIcons
 import ge.freeuni.jack.language.psi.JackClassDeclaration
 import ge.freeuni.jack.language.psi.util.JackElementFactory
 
-class GenerateSetterAction: CodeInsightAction() {
-    private val handler = GenerateSettersHandler()
-    
+class GenerateGetSetAction : CodeInsightAction() {
+
+    val handler: GenerateGetSetHandler = GenerateGetSetHandler()
+
     override fun getHandler(): CodeInsightActionHandler = handler
+
 }
 
+class GenerateGetSetHandler : LanguageCodeInsightActionHandler, DumbAware, WriteActionAware {
 
-class GenerateSettersHandler : LanguageCodeInsightActionHandler, DumbAware, WriteActionAware {
+    override fun startInWriteAction(): Boolean = false
+
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val jclass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java) ?: return
 
@@ -39,9 +43,13 @@ class GenerateSettersHandler : LanguageCodeInsightActionHandler, DumbAware, Writ
         }
 
 
+        if (members.isEmpty()) {
+            return
+        }
+
         val chooser = MemberChooser(members.toTypedArray(), true, true, project)
             .apply {
-                title = "Setters"
+                title = "Getters and Setters"
                 selectElements(members.toTypedArray())
                 setCopyJavadocVisible(false)
             }
@@ -54,10 +62,15 @@ class GenerateSettersHandler : LanguageCodeInsightActionHandler, DumbAware, Writ
         val methodTexts = arrayListOf<String>()
         selected.forEach { member ->
             methodTexts.add(
+                "${member.scope} ${member.type} get${member.qualifiedName}() {\n" +
+                    "\treturn ${member.name};\n" +
+                "}"
+            )
+            methodTexts.add(
                 "${member.scope} void set${member.qualifiedName}(${member.type} _${member.name}) {\n" +
-                        "\tlet ${member.name} = _${member.name};\n" +
-                        "\treturn;" +
-                        "}"
+                    "\tlet ${member.name} = _${member.name};\n" +
+                    "\treturn ;\n" +
+                "}"
             )
         }
         runWriteAction {
@@ -65,7 +78,7 @@ class GenerateSettersHandler : LanguageCodeInsightActionHandler, DumbAware, Writ
             val newline = PsiParserFacade.SERVICE.getInstance(project)
                 .createWhiteSpaceFromText("\n\n");
             body.addBefore(newline, body.rbrace)
-
+            
             for (method in methods) {
                 body.addBefore(method, body.rbrace)
                 body.addBefore(newline, body.rbrace)
@@ -73,7 +86,6 @@ class GenerateSettersHandler : LanguageCodeInsightActionHandler, DumbAware, Writ
         }
     }
 
-    override fun startInWriteAction(): Boolean = false
-    
+
     override fun isValidFor(editor: Editor?, file: PsiFile?): Boolean = true
 }

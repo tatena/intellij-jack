@@ -88,6 +88,9 @@
 
         <configurationType
                 implementation="ge.freeuni.jack.sdk.JackRunConfigurationType"/>
+
+        <additionalLibraryRootsProvider implementation="ge.freeuni.jack.language.lib.JackLibraryProvider"/>
+
     </extensions>
 
     <extensions defaultExtensionNs="ge.freeuni">
@@ -128,6 +131,18 @@
             <add-to-group group-id="GenerateGroup"/>
         </action>
 
+        <action class="ge.freeuni.jack.editor.generate.GenerateDisposeAction"
+                id="Jack.GenerateDispose"
+                text="Dispose">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
+        <action class="ge.freeuni.jack.editor.generate.GenerateGetSetAction"
+                id="Jack.GenerateGetSet"
+                text="Getter/Setter">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
         <action class="ge.freeuni.jack.editor.generate.GenerateGetterAction"
                 id="Jack.GenerateGetter"
                 text="Getter">
@@ -139,7 +154,5 @@
                 text="Setter">
             <add-to-group group-id="GenerateGroup"/>
         </action>
-
-
     </actions>
 </idea-plugin>
