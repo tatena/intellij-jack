@@ -20,5 +20,4 @@ class JackConfigurationFactory  constructor(type: ConfigurationType?) : Configur
         return JackRunConfigurationOptions::class.java
     }
 
-
 }

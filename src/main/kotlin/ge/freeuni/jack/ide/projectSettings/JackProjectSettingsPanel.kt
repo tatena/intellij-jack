@@ -64,11 +64,6 @@ class JackProjectSettingsPanel : Disposable {
         versionUpdateDebouncer.run(
             onPooledThread = {
                 pathToToolchain?.let { JackToolChainProvider.getToolchain(it) }
-//                val rustc = toolchain?.rustc()
-//                val rustup = toolchain?.rustup
-//                val rustcVersion = rustc?.queryVersion()?.semver
-//                val stdlibLocation = rustc?.getStdlibFromSysroot(cargoProjectDir)?.presentableUrl
-//                Triple(rustcVersion, stdlibLocation, rustup != null)
             },
             onUiThread = {
             }

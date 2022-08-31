@@ -33,11 +33,10 @@ class JackModuleBuilder : ModuleBuilder() {
         Files.createDirectory(Paths.get(directory))
 
         val file = File(fileName)
-        file.writeText("class Main {\n\tfunction void main() {\n\t\tdo Output.println(\"hello world\");\n\t}\n}")
-
-//        val runManager = RunManager.getInstance(modifiableRootModel.project)
-//        runManager.addConfiguration(JackConfigurationFactory().createTemplateConfiguration(modifiableRootModel.project))
-//        runManager.selectedConfiguration = configuration
+        file.writeText(
+            "class Main {\n\tfunction void main() {\n\t\tdo Output.printString(\"hello world\");\n\t\treturn;\n" +
+                    "\t}\n}"
+        )
     }
 
     override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): ModuleWizardStep {
