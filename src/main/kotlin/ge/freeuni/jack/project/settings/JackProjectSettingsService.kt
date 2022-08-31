@@ -44,7 +44,6 @@ val Project.toolchain: JackToolchainBase?
         val toolchain = jackSettings.toolchain
         return when {
             toolchain != null -> toolchain
-            isUnitTestMode -> JackToolchainBase.suggest()
             else -> null
         }
     }

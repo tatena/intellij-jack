@@ -3,6 +3,7 @@
 package ge.freeuni.jack.ide.projectSettings
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.Panel
@@ -72,5 +73,13 @@ class JackProjectSettingsPanel : Disposable {
             onUiThread = {
             }
         )
+    }
+
+    @Throws(ConfigurationException::class)
+    fun validateSettings() {
+        val toolchain = data.toolchain ?: return
+        if (!toolchain.looksLikeValidToolchain()) {
+            throw ConfigurationException("Invalid tools path")
+        }
     }
 }

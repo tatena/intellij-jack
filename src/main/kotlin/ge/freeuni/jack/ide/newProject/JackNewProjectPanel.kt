@@ -3,6 +3,7 @@
 package ge.freeuni.jack.ide.newProject
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.dsl.builder.Panel
 import ge.freeuni.jack.UiDebouncer
@@ -35,6 +36,10 @@ class JackNewProjectPanel(
                 updateListener?.invoke()
             }
         )
+    }
+
+    fun validateSettings() {
+        jackProjectSettings.validateSettings()
     }
 
 }
