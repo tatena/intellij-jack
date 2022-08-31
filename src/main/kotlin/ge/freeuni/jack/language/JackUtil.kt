@@ -8,6 +8,8 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.psi.*
+import java.util.stream.Collectors
+import kotlin.streams.toList
 
 object JackUtil {
     @JvmStatic
@@ -92,6 +94,15 @@ object JackUtil {
     }
 
     fun findParamProps(elem: JackVarReference): List<JackPropertyDefinition> {
-        return getFuncParams(elem)?.propertyDefinitionList ?: listOf()
+        return getFuncParams(elem)?.paramList?.map { e -> e.propertyDefinition } ?: listOf()
+    }
+
+    fun getLocalMethods(elem: JackFuncReference): List<JackFunc> {
+        val file = elem.containingFile
+        val jclass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java) ?: return listOf()
+        
+        val funcs = jclass.classBody?.funcList ?: return listOf()
+        
+        return funcs.stream().filter { e -> e.funcScope.isMethod }.toList()
     }
 }

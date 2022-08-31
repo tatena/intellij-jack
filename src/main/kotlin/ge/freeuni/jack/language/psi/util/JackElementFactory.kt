@@ -1,12 +1,14 @@
 package ge.freeuni.jack.language.psi.util
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.JackFileType
 import ge.freeuni.jack.language.psi.*
 import ge.freeuni.jack.language.stub.impl.JackClassNameDefStub
 import ge.freeuni.jack.language.stub.type.JackClassNameDefStubElementType
+import ge.freeuni.jack.language.stub.type.JackMethodDefinitionStubElementType
 import ge.freeuni.jack.language.stub.type.JackPropertyDefinitionStubElementType
 import ge.freeuni.jack.language.stub.type.JackStubElementType
 
@@ -86,11 +88,34 @@ object JackElementFactory {
             .createFileFromText(filename, JackFileType.INSTANCE, classDecl)
                 as JackFile
     }
+
+    fun createFunctionDefinition(project: Project, name: String): JackFuncNameDefinition {
+        val classDecl = createFileWithFunction(project, propertyName = name).firstChild
+                as JackClassDeclaration
+        val optBody = classDecl.classBody
+
+        optBody?.let { body ->
+            val prop = body.funcList[0]
+            if (prop != null && prop.funcNameDefinition != null) {
+                return prop.funcNameDefinition!!
+            }
+        }
+        throw RuntimeException("dummy file with single function couldn't be created")
+    }
+
+    private fun createFileWithFunction(project: Project, propertyName: String, classRef: String = "DummyClassRef"): JackFile {
+        val filename = "dummy.jack"
+        val classDecl = "class Dummy { method $classRef $propertyName() { return; } }"
+        return PsiFileFactory.getInstance(project)
+            .createFileFromText(filename, JackFileType.INSTANCE, classDecl)
+                as JackFile
+    }
 }
 //@JvmStatic
 fun factory(name: String): JackStubElementType<*, *> = when(name) {
     "CLASS_NAME_DEFINITION" -> JackClassNameDefStubElementType(name)
     "PROPERTY_DEFINITION" -> JackPropertyDefinitionStubElementType(name)
+    "FUNC_NAME_DEFINITION" -> JackMethodDefinitionStubElementType(name)
     else -> throw RuntimeException("Unknown element type: $name")
 }
 

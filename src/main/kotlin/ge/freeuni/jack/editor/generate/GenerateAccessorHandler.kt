@@ -97,7 +97,7 @@ data class JackPropertyChooser(
     val name: String,
     val qualifiedName: String
 )
-    : MemberChooserObjectBase("$name: $type", JackIcons.FILE), ClassMember {
+    : MemberChooserObjectBase("$name: $type", JackIcons.resolveProperty(scope)), ClassMember {
     override fun getParentNodeDelegate(): MemberChooserObject = base
 }
 

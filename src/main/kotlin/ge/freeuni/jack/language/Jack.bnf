@@ -46,7 +46,7 @@
 File ::= ClassDeclaration?
 ClassDeclaration ::= JCLASS ClassNameDefinition ClassBody {
 	pin=1
-	methods=[getClassName]
+	methods=[getClassName getStaticMethods getMemberMethods]
 }
 
 fake BinaryExpr ::= Expr+ {
@@ -87,22 +87,36 @@ PropertyDefinition ::= identifier {
 }
 
 
-Func ::= (function | method | constructor) ReturnType FuncNameDefinition FuncParams FuncBody{
+Func ::= FuncScope ReturnType FuncNameDefinition FuncParams FuncBody{
 	 pin=1
+}
+FuncScope ::= function | method | constructor {
+	methods=[isMethod isStatic]
 }
 private ReturnType ::= PrimitiveRetType | ReferenceType
 PrimitiveRetType ::= (int | boolean | char | void)
 
-FuncNameDefinition ::= identifier 
+FuncNameDefinition ::= identifier {
+	implements="ge.freeuni.jack.language.psi.JackNamedElement"
+	mixin="ge.freeuni.jack.language.psi.impl.JackMethodDefinitionMixin"
+	stubClass="ge.freeuni.jack.language.stub.impl.JackMethodDefinitionStub"
+	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
+}
 
 FuncParams ::= LPAREN Params* RPAREN { pin=1 }
 
-private Params ::= Type PropertyDefinition Tail*
+private Params ::= Param Tail*
+Param ::= Type PropertyDefinition {
+	methods=[getType]
+}
 
-private Tail ::= COMMA Type PropertyDefinition
+private Tail ::= COMMA Param
 FuncBody ::= LBRACE LocalVars* Statement* RBRACE { pin=1 }
 
-LocalVars ::= var Type PropertyDefinition DefinitionTail* SEMICOLON {pin=1}
+LocalVars ::= var Type PropertyDefinition DefinitionTail* SEMICOLON {
+	pin=1
+	methods=[getType]
+}
 private DefinitionTail ::= COMMA PropertyDefinition { pin=1 }
 
 Statement ::= LetStatement
@@ -156,7 +170,7 @@ PlusExpr ::= Expr PLUS Expr
 MinusExpr ::= Expr MINUS Expr 
 MulExpr ::= Expr MUL Expr 
 DivExpr ::= Expr DIV Expr 
-CallExpr ::= Expr CallParams
+CallExpr ::= FuncReference CallParams
 ThisExpr ::= this (DOT VarReference)? {pin=1}
 IndexExpr ::= Expr IndexParams
 AccessExpr ::= Expr DOT Expr 
@@ -177,6 +191,9 @@ Arg ::= Expr
 
 
 
+FuncReference ::= identifier {
+	methods=[setName resolve getReference]
+}
 VarReference ::= identifier {
 	methods=[setName resolve getReference]
 }
