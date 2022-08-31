@@ -86,6 +86,8 @@
         <projectService serviceInterface="ge.freeuni.jack.project.settings.JackProjectSettingsService"
                         serviceImplementation="ge.freeuni.jack.project.settings.JackProjectSettingsServiceImpl"/>
 
+        
+        <additionalLibraryRootsProvider implementation="ge.freeuni.jack.language.lib.JackLibraryProvider"/>
 
     </extensions>
 
@@ -116,6 +118,18 @@
                 text="Constructor">
             <add-to-group group-id="GenerateGroup"/>
         </action>
+        
+        <action class="ge.freeuni.jack.editor.generate.GenerateDisposeAction"
+                id="Jack.GenerateDispose"
+                text="Dispose">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
+
+        <action class="ge.freeuni.jack.editor.generate.GenerateGetSetAction"
+                id="Jack.GenerateGetSet"
+                text="Getter/Setter">
+            <add-to-group group-id="GenerateGroup"/>
+        </action>
 
         <action class="ge.freeuni.jack.editor.generate.GenerateGetterAction"
                 id="Jack.GenerateGetter"
@@ -128,7 +142,5 @@
                 text="Setter">
             <add-to-group group-id="GenerateGroup"/>
         </action>
-
-
     </actions>
 </idea-plugin>

@@ -45,6 +45,8 @@ class GenerateConstructorHandler: LanguageCodeInsightActionHandler, DumbAware, W
 
         return choosers
     }
+
+    override fun startInWriteAction(): Boolean = false
     
     
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
@@ -67,7 +69,7 @@ class GenerateConstructorHandler: LanguageCodeInsightActionHandler, DumbAware, W
 
         val chooser = MemberChooser(members.toTypedArray(), true, true, project)
             .apply {
-                title = "Getters"
+                title = "Constructor"
                 selectElements(members.toTypedArray())
                 setCopyJavadocVisible(false)
             }
@@ -82,16 +84,16 @@ class GenerateConstructorHandler: LanguageCodeInsightActionHandler, DumbAware, W
         var assigns = ""
         val methodTexts = arrayListOf<String>()
         selected.forEach { member ->
-            args += "${member.type} ${member.name}, "
-            assigns += "\tlet this.${member.name} = ${member.name};\n"
+            args += "${member.type} _${member.name}, "
+            assigns += "\tlet ${member.name} = _${member.name};\n"
         }
         if (args.length > 1) {
             args = args.dropLast(2)
         }
         methodTexts.add(
-            "constructor $classname new$classname($args) {\n" +
-            assigns +
-            "\treturn this;\n" +
+            "constructor $classname new($args) {\n" +
+                assigns +
+                "\treturn this;\n" +
             "}"
         )
         runWriteAction {

@@ -2,8 +2,6 @@ package ge.freeuni.jack.editor.generate
 
 import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.actions.CodeInsightAction
-import com.intellij.codeInsight.generation.ClassMember
-import com.intellij.codeInsight.generation.MemberChooserObject
 import com.intellij.codeInsight.generation.MemberChooserObjectBase
 import com.intellij.ide.util.MemberChooser
 import com.intellij.lang.LanguageCodeInsightActionHandler
@@ -12,28 +10,45 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiParserFacade
-import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.JackIcons
-import ge.freeuni.jack.language.psi.*
+import ge.freeuni.jack.language.psi.JackClassDeclaration
+import ge.freeuni.jack.language.psi.JackProperty
 import ge.freeuni.jack.language.psi.util.JackElementFactory
-import java.util.stream.Collectors
 
-
-class GenerateGetterAction : CodeInsightAction() {
-
-    val handler: GenerateGetterHandler = GenerateGetterHandler()
+class GenerateDisposeAction: CodeInsightAction() {
+    private val handler = GenerateDisposeHandler()
 
     override fun getHandler(): CodeInsightActionHandler = handler
-
 }
 
-class GenerateGetterHandler : LanguageCodeInsightActionHandler, DumbAware, WriteActionAware {
 
-    override fun startInWriteAction(): Boolean = false
+class GenerateDisposeHandler: LanguageCodeInsightActionHandler, DumbAware, WriteActionAware {
+    private fun toPropItems(base: MemberChooserObjectBase, prop: JackProperty): List<JackPropertyChooser> {
+        val type = prop.type
+
+        val scope = prop.propertyScope.scope
+
+        if (scope == "function") {
+            return listOf()
+        }
+        
+        if (prop.primitiveType != null) {
+            return listOf()
+        }
+
+        val choosers = arrayListOf<JackPropertyChooser>()
+        prop.propertyDefinitionList.forEach { def ->
+            val name = def.identifier.text
+            val qualifiedName = name.replaceFirstChar { it.uppercase() }
+            choosers.add(JackPropertyChooser(type, scope, base, name, qualifiedName))
+        }
+
+        return choosers
+    }
+    
     
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val jclass = PsiTreeUtil.findChildOfType(file, JackClassDeclaration::class.java) ?: return
@@ -45,7 +60,7 @@ class GenerateGetterHandler : LanguageCodeInsightActionHandler, DumbAware, Write
         val members = arrayListOf<JackPropertyChooser>()
 
         for (prop in properties) {
-            members.addAll(toPropItems(base, prop))
+            members.addAll(this.toPropItems(base, prop))
         }
 
 
@@ -54,8 +69,8 @@ class GenerateGetterHandler : LanguageCodeInsightActionHandler, DumbAware, Write
         }
 
         val chooser = MemberChooser(members.toTypedArray(), true, true, project)
-            .apply { 
-                title = "Getters"
+            .apply {
+                title = "Dispose"
                 selectElements(members.toTypedArray())
                 setCopyJavadocVisible(false)
             }
@@ -66,19 +81,25 @@ class GenerateGetterHandler : LanguageCodeInsightActionHandler, DumbAware, Write
         chooser.selectedElements?.let { selected.addAll(it) }
 
         val methodTexts = arrayListOf<String>()
+        var deallocs = ""
         selected.forEach { member ->
-            methodTexts.add(
-                "${member.scope} ${member.type} get${member.qualifiedName}() {\n" +
-                "\treturn this.${member.name};\n" +
-                "}"
-            )
+            deallocs += "\tdo ${member.name}.dispose();\n"
         }
+
+        methodTexts.add(
+            "method void dispose() {\n" +
+                deallocs +
+                "\tdo Memory.deAlloc(this);\n" +
+                "\treturn;\n" +
+            "}"
+        )
+
         runWriteAction {
             val methods = JackElementFactory.createMethods(methodTexts, project)
             val newline = PsiParserFacade.SERVICE.getInstance(project)
                 .createWhiteSpaceFromText("\n\n");
             body.addBefore(newline, body.rbrace)
-            
+
             for (method in methods) {
                 body.addBefore(method, body.rbrace)
                 body.addBefore(newline, body.rbrace)
@@ -86,32 +107,7 @@ class GenerateGetterHandler : LanguageCodeInsightActionHandler, DumbAware, Write
         }
     }
 
-    
     override fun isValidFor(editor: Editor?, file: PsiFile?): Boolean = true
-}
 
-data class JackPropertyChooser(
-    val type: String,
-    val scope: String,
-    private val base: MemberChooserObjectBase,
-    val name: String,
-    val qualifiedName: String
-)
-    : MemberChooserObjectBase("$name: $type", JackIcons.resolveProperty(scope)), ClassMember {
-    override fun getParentNodeDelegate(): MemberChooserObject = base
-}
-
-fun toPropItems(base: MemberChooserObjectBase, prop: JackProperty): List<JackPropertyChooser> {
-    val type = prop.type
-
-    val scope = prop.propertyScope.scope
-
-    val choosers = arrayListOf<JackPropertyChooser>()
-    prop.propertyDefinitionList.forEach { def ->
-        val name = def.identifier.text
-        val qualifiedName = name.replaceFirstChar { it.uppercase() }
-        choosers.add(JackPropertyChooser(type, scope, base, name, qualifiedName))
-    }
-
-    return choosers
+    override fun startInWriteAction(): Boolean = false
 }

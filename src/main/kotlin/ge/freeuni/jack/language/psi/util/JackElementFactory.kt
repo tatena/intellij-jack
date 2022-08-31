@@ -19,7 +19,7 @@ object JackElementFactory {
         return classDecl.classNameDefinition!!
     }
 
-    private fun createFile(project: Project, className: String): JackFile {
+    fun createFile(project: Project, className: String): JackFile {
         val filename = "dummy.jack"
         val classDecl = "class $className { }"
         return PsiFileFactory.getInstance(project)
@@ -47,13 +47,7 @@ object JackElementFactory {
         }
         throw RuntimeException("dummy file with single property couldn't be created")
     }
-    // public static SimpleFile createFile(Project project, String text) {
-    //    String name = "dummy.simple";
-    //    return (SimpleFile) PsiFileFactory.getInstance(project).
-    //        createFileFromText(name, SimpleFileType.INSTANCE, text);
-    //  }
     
-
     fun createPropertyDefinition(project: Project, name: String): JackPropertyDefinition {
         val classDecl = createFileWithProperty(project, propertyName = name).firstChild
                 as JackClassDeclaration

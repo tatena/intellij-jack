@@ -15,11 +15,10 @@ import javax.swing.Icon
 
 object JackPsiImplUtil {
     @JvmStatic
-    fun getClassName(property: JackClassDeclaration): String? {
+    fun getClassName(property: JackClassDeclaration): String {
         val node = property.node.findChildByType(JackTypes.CLASS_NAME_DEFINITION)
 
-        val name = node?.findChildByType(JackTypes.IDENTIFIER)?.text
-        return name
+        return node?.findChildByType(JackTypes.IDENTIFIER)?.text ?: "EmptyClassName"
     }
     
     @JvmStatic 
