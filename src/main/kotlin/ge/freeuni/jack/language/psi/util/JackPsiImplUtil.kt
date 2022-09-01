@@ -296,7 +296,7 @@ object JackPsiImplUtil {
     @JvmStatic
     fun getStaticMethods(elem: JackClassDeclaration): List<JackFunc> {
         val body = elem.classBody ?: return listOf()
-        return body.funcList.filter { e -> e.funcScope.isStatic }
+        return body.funcList.filter { e -> !e.funcScope.isMethod }
     }
     @JvmStatic
     fun getMemberMethods(elem: JackClassDeclaration): List<JackFunc> {

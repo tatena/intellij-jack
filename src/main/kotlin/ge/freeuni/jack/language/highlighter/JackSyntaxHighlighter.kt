@@ -55,7 +55,7 @@ class JackSyntaxHighlighter : SyntaxHighlighterBase() {
             JackTypes.METHOD, JackTypes.FUNCTION, JackTypes.VOID,
             JackTypes.CONSTRUCTOR, JackTypes.LET, JackTypes.VAR,
             JackTypes.DO, JackTypes.IF, JackTypes.ELSE, JackTypes.WHILE,
-            JackTypes.RETURN, JackTypes.THIS
+            JackTypes.RETURN, JackTypes.THIS, JackTypes.TRUE, JackTypes.FALSE, JackTypes.NULL
             -> KEYWORDS
             JackTypes.IDENTIFIER,
             JackTypes.SEMICOLON,

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="Jack">
+
+    <template name="while"
+              value="while ($EXPR$) {&#10;          $END$&#10;}"
+              description="while (...) { }" toReformat="true" toShortenFQNames="true">
+        <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="function"
+              value="function $TYPE$ $NAME$ ($ARGS$) {&#10;          $END$&#10;             return;&#10;}"
+              description="function () {...}" toReformat="true" toShortenFQNames="true">
+        <variable name="TYPE" expression="" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
+        <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+        <variable name="ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="method"
+              value="method $TYPE$ $NAME$ ($ARGS$) {&#10;          $END$&#10;             return;&#10;}"
+              description="method () {...}" toReformat="true" toShortenFQNames="true">
+        <variable name="TYPE" expression="" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
+        <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+        <variable name="ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="field"
+              value="field $TYPE$ $NAME$;&#10;$END$"
+              description="field ...;" toReformat="true" toShortenFQNames="true">
+        <variable name="TYPE" expression="" defaultValue="&quot;Type&quot;" alwaysStopAt="true"/>
+        <variable name="NAME" expression="" defaultValue="&quot;varNames&quot;" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="static"
+              value="static $TYPE$ $NAME$;&#10;$END$"
+              description="static ...;" toReformat="true" toShortenFQNames="true">
+        <variable name="TYPE" expression="" defaultValue="&quot;Type&quot;" alwaysStopAt="true"/>
+        <variable name="NAME" expression="" defaultValue="&quot;varNames&quot;" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="var"
+              value="var $TYPE$ $NAME$;&#10;$END$"
+              description="variable definitions" toReformat="true" toShortenFQNames="true">
+        <variable name="TYPE" expression="" defaultValue="&quot;Type&quot;" alwaysStopAt="true"/>
+        <variable name="NAME" expression="" defaultValue="&quot;varNames&quot;" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="do"
+              value="do $EXPR$;&#10;$END$"
+              description="do ...;" toReformat="true" toShortenFQNames="true">
+        <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="let"
+              value="let $VAR$ = $EXPR$;&#10;$END$"
+              description="let ... = ...;" toReformat="true" toShortenFQNames="true">
+        <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="if"
+              value="if ($EXPR$) {&#10;$END$&#10;}&#10;"
+              description="if (expr) { ... }" toReformat="true" toShortenFQNames="true">
+        <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="else"
+              value="else {&#10;$END$&#10;}&#10;"
+              description="else { ... }" toReformat="true" toShortenFQNames="true">
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+    <template name="ifelse" title="if/else"
+              value="if ($EXPR$) {&#10;$END$&#10;} else {&#10;}&#10;"
+              description="if/else { ... }" toReformat="true" toShortenFQNames="true">
+        <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="JACK_STATEMENT" value="true"/>
+        </context>
+    </template>
+
+
+</templateSet>
