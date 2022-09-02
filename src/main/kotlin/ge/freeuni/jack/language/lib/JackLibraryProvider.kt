@@ -1,76 +1,41 @@
 package ge.freeuni.jack.language.lib
 
-import com.intellij.navigation.ItemPresentation
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.roots.SyntheticLibrary
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.impl.FakePsiElement
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.impl.file.impl.FileManager
-import com.intellij.psi.impl.file.impl.FileManagerImpl
-import ge.freeuni.jack.language.JackFileType
-import ge.freeuni.jack.language.JackIcons
-import ge.freeuni.jack.language.JackUtil
-import ge.freeuni.jack.language.psi.JackFile
-import ge.freeuni.jack.language.psi.util.JackElementFactory
-import javax.swing.Icon
+import ge.freeuni.jack.project.settings.jackSettings
+import java.nio.file.Path
+import kotlin.io.path.notExists
 
 class JackLibraryProvider: AdditionalLibraryRootsProvider() {
+    
+    companion object {
+        private val libFiles = listOf("Array", "Screen", "Output", "Keyboard", "Math", "Memory", "String", "Sys")
+    }
 
     override fun getAdditionalProjectLibraries(project: Project): MutableCollection<SyntheticLibrary> {
-        val vf = ArrayVF(project)
+
+        val path = project.jackSettings.toolchain?.location?.resolve("OS") ?: return mutableListOf()
         
-        return arrayListOf(JackSyntheticLibrary(hashSetOf()))
+        for (classname in libFiles) {
+            javaClass.addStdUnitStubToDirectory(path, classname)
+        }
+        val file: VirtualFile = VfsUtil.findFile(path, false) ?: return mutableListOf()
+        
+        return mutableListOf(SyntheticLibrary.newImmutableLibrary(listOf(file)))
+    }
+}
+private fun Class<*>.addStdUnitStubToDirectory(stdlibRoot: Path, classname: String) {
+    if (stdlibRoot.notExists()) return
+
+    val stdUnitPath = stdlibRoot.resolve("$classname.jack")
+    if (stdUnitPath.notExists()) {
+        val stdUnitText = getResource("/lib/$classname.jack")?.readText()
+        if (stdUnitText != null) {
+            stdUnitPath.toFile().writeText(stdUnitText)
+        }
     }
 }
 
-
-
-class JackSyntheticLibrary(private val sourceRoots: Set<VirtualFile>): SyntheticLibrary(), ItemPresentation {
-    override fun equals(other: Any?): Boolean =
-        other is JackSyntheticLibrary && other.sourceRoots == sourceRoots
-
-    override fun hashCode(): Int = sourceRoots.hashCode()
-    
-    override fun getPresentableText(): String = "Jack STL"
-
-    override fun getIcon(unused: Boolean): Icon = JackIcons.FILE
-
-    override fun getSourceRoots(): Collection<VirtualFile> = sourceRoots
-
-}
-
-
-
-private fun ArrayVF(project: Project): VirtualFile? {
-    val filename = "Array.jack"
-    val classname = "Array"
-    
-    val jclass = 
-        """
-            class $classname { 
-                constructor Array new(int size) {
-                    return this;
-                }
-                
-                method void dispose() {
-                    return;
-                }
-            }
-        """
-    val i = PsiFileFactory.getInstance(project)
-    val file = i.createFileFromText(filename, JackFileType.INSTANCE, jclass)
-    
-    if (file.virtualFile == null) {
-        println("baro lashukaaaaaaaaaaa")
-        return null
-    }
-//    return PsiFileFactory.getInstance(project)
-//        .createFileFromText(filename, JackFileType.INSTANCE, jclass)
-//        .virtualFile
-    return null
-}

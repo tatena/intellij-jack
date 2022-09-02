@@ -1,0 +1,11 @@
+class Array {
+	constructor Array new(int size) {
+		/* compiled code */
+		return this;
+	}
+
+	method void dispose() {
+		/* compiled code */
+		return;
+	}
+}

@@ -1,0 +1,19 @@
+class Keyboard {
+	
+	function char keyPressed() {
+		/* compiled code */
+		return;
+	}
+	function char readChar() {
+		/* compiled code */
+		return;
+	}
+	function String readLine(String message) {
+		/* compiled code */
+		return;
+	}
+	function int readInt(String message) {
+		/* compiled code */
+		return;
+	}
+}
