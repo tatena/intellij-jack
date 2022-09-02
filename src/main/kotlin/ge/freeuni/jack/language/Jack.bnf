@@ -59,7 +59,7 @@ ClassNameDefinition ::= identifier {
 	stubClass="ge.freeuni.jack.language.stub.impl.JackClassNameDefStub"
 	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
 }
-ClassBody ::= LBRACE (Property | EmptyElem) * Func* RBRACE {pin=1}
+ClassBody ::= LBRACE (Property | PropertyPlaceholder)* (Func | FuncPlaceholder)* RBRACE {pin=1}
 
 
 Property ::= PropertyScope Type PropertyDefinition DefinitionTail* SEMICOLON {
@@ -68,7 +68,9 @@ Property ::= PropertyScope Type PropertyDefinition DefinitionTail* SEMICOLON {
 	methods=[getType]
 }
 
-EmptyElem ::= identifier
+PropertyPlaceholder ::= identifier
+FuncPlaceholder ::= identifier
+
 
 PropertyScope ::= static | field {
 	methods=[getScope]
@@ -111,6 +113,7 @@ FuncParams ::= LPAREN Params* RPAREN { pin=1 }
 
 private Params ::= Param Tail*
 Param ::= Type PropertyDefinition {
+    pin=1
 	methods=[getType]
 }
 
@@ -128,6 +131,9 @@ Statement ::= LetStatement
 		| IfStatement
 		| WhileStatement 
 		| ReturnStatement
+	    | StatementPlaceholder
+
+StatementPlaceholder ::= identifier
 
 LetStatement ::= let (IndexExpr | ReferenceExpr) EQ Expr SEMICOLON {pin=1}
 DoStatement ::= do Expr SEMICOLON {pin=1}

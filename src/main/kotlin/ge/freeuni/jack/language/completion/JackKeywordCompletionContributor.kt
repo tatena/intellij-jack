@@ -1,5 +1,6 @@
 package ge.freeuni.jack.language.completion
 
+import com.fasterxml.jackson.databind.JavaType
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
@@ -24,11 +25,60 @@ class JackKeywordCompletionContributor : CompletionContributor() {
         )
     }
 
+    private fun extendBasic(
+        pattern: PsiElementPattern.Capture<PsiElement>,
+        vararg keywords: String
+    ) {
+        extend(CompletionType.BASIC, pattern, JackKeywordCompletionProvider(keywords = listOf(*keywords)))
+    }
+
     init {
-        registerStandardCompletion(propertyPattern(), false, FIELD, STATIC)
-        registerStandardCompletion(propertyTypePattern(), false, INT, CHAR, BOOLEAN)
+//        registerStandardCompletion(propertyPattern(), false, FIELD, STATIC)
+//        registerStandardCompletion(propertyTypePattern(), false, INT, CHAR, BOOLEAN)
+
+        extendBasic(newPropPattern(), "field", "static", "function", "constructor", "methods")
+        extendBasic(newFuncPattern(), "function", "constructor", "methods")
+
+        extendBasic(newStmtPattern(), "var", "let", "if", "do", "while", "return")
+
+        extendBasic(newTypePattern(), "int", "boolean", "char")
         
-        extend(CompletionType.BASIC, dotPattern(), JackThisCompletionProvider())
+//        extend(CompletionType.BASIC, dotPattern(), JackThisCompletionProvider())
+    }
+
+    private fun newTypePattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement(JackTypes.IDENTIFIER).withParent(
+            psiElement(JackTypes.REFERENCE_TYPE)
+        )
+    }
+
+    private fun newStmtPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement(JackTypes.IDENTIFIER).withParent(
+            psiElement(JackTypes.STATEMENT_PLACEHOLDER).withSuperParent(2,
+                psiElement().andOr(
+                    psiElement(JackTypes.FUNC_BODY),
+                    psiElement(JackTypes.IF_BODY),
+                    psiElement(JackTypes.ELSE_BODY),
+                    psiElement(JackTypes.WHILE_BODY)
+                )
+            )
+        )
+    }
+
+    private fun newFuncPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement(JackTypes.IDENTIFIER).withParent(
+            psiElement(JackTypes.FUNC_PLACEHOLDER).withParent(
+                psiElement(JackTypes.CLASS_BODY)
+            )
+        )
+    }
+
+    private fun newPropPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement(JackTypes.IDENTIFIER).withParent(
+            psiElement(JackTypes.PROPERTY_PLACEHOLDER).withParent(
+                psiElement(JackTypes.CLASS_BODY)
+            )
+        )
     }
 
     private fun dotPattern(): PsiElementPattern.Capture<PsiElement> {

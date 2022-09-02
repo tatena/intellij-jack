@@ -95,7 +95,12 @@ object JackUtil {
     }
 
     fun findParamProps(elem: JackVarReference): List<JackPropertyDefinition> {
-        return getFuncParams(elem)?.paramList?.map { e -> e.propertyDefinition } ?: listOf()
+        val params = getFuncParams(elem)?.paramList ?: return listOf()
+        val res = arrayListOf<JackPropertyDefinition>()
+        for (param in params) {
+            param.propertyDefinition?.let { res.add(it) }
+        }
+        return res
     }
 
     fun getLocalMethods(elem: JackFuncReference): List<JackFunc> {
@@ -104,6 +109,6 @@ object JackUtil {
         
         val funcs = jclass.classBody?.funcList ?: return listOf()
         
-        return funcs.stream().filter { e -> e.funcScope.isMethod }.toList()
+        return funcs.filter { e -> e.funcScope.isMethod }
     }
 }
