@@ -1,0 +1,33 @@
+class Output {
+
+	function void moveCursor(int i, int j) {
+		/* compiled code */
+		return;
+	}
+	
+	function void printChar(char c) {
+		/* compiled code */
+		return;
+	}
+	
+	function void printString(String s) {
+		/* compiled code */
+		return;
+	}
+	
+	function void printInt(int i) {
+		/* compiled code */
+		return;
+	}
+	
+	function void println() {
+		/* compiled code */
+		return;
+	}
+	
+	function void backSpace() {
+		/* compiled code */
+		return;
+	}
+	
+}

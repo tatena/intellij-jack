@@ -1,0 +1,21 @@
+class Memory {
+	
+	function int peek(int address) {
+		/* compiled code */
+		return;
+	}
+	function void poke(int address, int value) {
+		/* compiled code */
+		return;
+	}
+	function Array alloc(int size) {
+		/* compiled code */
+		return;
+	}
+	function void deAlloc(Array o) {
+		/* compiled code */
+		return;
+	}
+
+	
+}

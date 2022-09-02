@@ -59,13 +59,19 @@ ClassNameDefinition ::= identifier {
 	stubClass="ge.freeuni.jack.language.stub.impl.JackClassNameDefStub"
 	elementTypeFactory="ge.freeuni.jack.language.psi.util.JackElementFactoryKt.factory"
 }
-ClassBody ::= LBRACE Property* Func* RBRACE {pin=1}
+ClassBody ::= LBRACE (Property | PropertyPlaceholder)* (Func | FuncPlaceholder)* RBRACE {pin=1}
+
 
 Property ::= PropertyScope Type PropertyDefinition DefinitionTail* SEMICOLON {
 	pin=1
 //	recoverWhile=PropertyRecovery
 	methods=[getType]
 }
+
+PropertyPlaceholder ::= identifier
+FuncPlaceholder ::= identifier
+
+
 PropertyScope ::= static | field {
 	methods=[getScope]
 }
@@ -107,6 +113,7 @@ FuncParams ::= LPAREN Params* RPAREN { pin=1 }
 
 private Params ::= Param Tail*
 Param ::= Type PropertyDefinition {
+    pin=1
 	methods=[getType]
 }
 
@@ -124,8 +131,11 @@ Statement ::= LetStatement
 		| IfStatement
 		| WhileStatement 
 		| ReturnStatement
+	    | StatementPlaceholder
 
-LetStatement ::= let (ThisExpr | IndexExpr | ReferenceExpr) EQ Expr SEMICOLON {pin=1}
+StatementPlaceholder ::= identifier
+
+LetStatement ::= let (IndexExpr | ReferenceExpr) EQ Expr SEMICOLON {pin=1}
 DoStatement ::= do Expr SEMICOLON {pin=1}
 IfStatement ::= if LPAREN Expr RPAREN IfBody ElseStatement? {pin=1}
 ElseStatement ::= else ElseBody {pin=1}
@@ -158,7 +168,7 @@ private CalcPrefixGroup ::= UnaryMinusExpr | UnaryNotExpr
 private CallGroup ::= CallExpr
 private AccessGroup ::= AccessExpr
 private IndexGroup ::= IndexExpr
-private PrimaryGroup ::=  LiteralExpr | ParenExpr | ReferenceExpr | ThisExpr
+private PrimaryGroup ::=  LiteralExpr | ParenExpr | ReferenceExpr
 
 
 EqualExpr ::= Expr EQ Expr
@@ -171,24 +181,27 @@ MinusExpr ::= Expr MINUS Expr
 MulExpr ::= Expr MUL Expr 
 DivExpr ::= Expr DIV Expr 
 CallExpr ::= FuncReference CallParams
-ThisExpr ::= this (DOT VarReference)? {pin=1}
 IndexExpr ::= Expr IndexParams
-AccessExpr ::= Expr DOT Expr 
+AccessExpr ::= AccessReference DOT CallExpr
 UnaryMinusExpr ::= MINUS Expr  {pin = 1}
 ReferenceExpr ::= VarReference
 UnaryNotExpr ::= NOT Expr  {pin = 1}
 
-LiteralExpr ::= BoolLiteral | NumLiteral | StringLiteral
+LiteralExpr ::= BoolLiteral | NumLiteral | StringLiteral | ThisLiteral | NullLiteral
 ParenExpr ::= LPAREN Expr RPAREN {pin=1}
+
 BoolLiteral ::= true | false
 NumLiteral ::= integer
 StringLiteral ::= string
+ThisLiteral ::= this
+NullLiteral ::= null
 
 CallParams ::= LPAREN Arguments? RPAREN {pin=1}
 IndexParams ::= LBRACK Arg RBRACK {pin=1}
 Arguments ::= Arg (COMMA Arg)*  {pin(".*")=1}
 Arg ::= Expr
 
+AccessReference ::= ReferenceType | VarReference 
 
 
 FuncReference ::= identifier {

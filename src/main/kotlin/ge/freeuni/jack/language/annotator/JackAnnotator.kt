@@ -24,9 +24,9 @@ class JackAnnotator: Annotator {
                     .textAttributes(JackSyntaxHighlighter.ANNOTATION)
                     .create()
             } else {
-                holder.newAnnotation(ERROR, "Unresolved Class reference")
-                    .range(range).highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-                    .create()
+//                holder.newAnnotation(ERROR, "Unresolved Class reference")
+//                    .range(range).highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
+//                    .create()
             }
         }
     }

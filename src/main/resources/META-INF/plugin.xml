@@ -90,6 +90,9 @@
                 implementation="ge.freeuni.jack.sdk.JackRunConfigurationType"/>
 
         <additionalLibraryRootsProvider implementation="ge.freeuni.jack.language.lib.JackLibraryProvider"/>
+        
+        <defaultLiveTemplates file="/liveTemplates/Jack.xml"/>
+        <liveTemplateContext implementation="ge.freeuni.jack.editor.snippets.JackTemplateContext"/>
 
     </extensions>
 

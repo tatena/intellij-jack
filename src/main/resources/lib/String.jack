@@ -1,0 +1,62 @@
+class String {
+
+	constructor String new(int maxLength) {
+		/* compiled code */
+		return this;
+	}
+
+	method void dispose() {
+		/* compiled code */
+		return;
+	}
+
+	method int length() {
+		/* compiled code */
+		return;
+	}
+
+	method char charAt(int j) {
+		/* compiled code */
+		return;
+	}
+
+	method void setCharAt(int j, char c) {
+		/* compiled code */
+		return;
+	}
+
+	method String appendChar(char c) {
+		/* compiled code */
+		return;
+	}
+
+	method void eraseLastChar() {
+		/* compiled code */
+		return;
+	}
+
+	method int intValue() {
+		/* compiled code */
+		return;
+	}
+
+	method void setInt(int j) {
+		/* compiled code */
+		return;
+	}
+
+	function char backSpace() {
+		/* compiled code */
+		return;
+	}
+
+	function char doubleQuote() {
+		/* compiled code */
+		return;
+	}
+
+	function char newLine() {
+		/* compiled code */
+		return;
+	}
+}

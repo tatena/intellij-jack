@@ -1,0 +1,33 @@
+class Math {
+	
+	function int abs(int x) {
+		/* compiled code */
+		return;
+	}
+	
+	function int multiply(int x, int y) {
+		/* compiled code */
+		return;
+	}
+	
+	function int divide(int x, int y) {
+		/* compiled code */
+		return;
+	}
+	
+	function int min(int x, int y) {
+		/* compiled code */
+		return;
+	}
+	
+	function int max(int x, int y) {
+		/* compiled code */
+		return;
+	}
+	
+	function int sqrt(int x) {
+		/* compiled code */
+		return;
+	}
+	
+}
