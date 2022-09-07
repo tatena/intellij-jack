@@ -6,25 +6,16 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 
-class JackKeywordCompletionProvider(private val needSpace: Boolean = false, private val keywords: List<String>) :
+class JackKeywordCompletionProvider(private val  keywords: List<String>) :
     CompletionProvider<CompletionParameters>() {
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        val nextSymbolIsSpace = isNextSymbolIsSpace(parameters)
         result.addAllElements(keywords.map { keyword ->
-            val lookupString = if (!nextSymbolIsSpace && needSpace) "$keyword " else keyword
-            LookupElementBuilder.create(lookupString)
+            LookupElementBuilder.create("$keyword ")
         })
     }
 
-    private fun isNextSymbolIsSpace(parameters: CompletionParameters): Boolean {
-//        val editor = parameters.editor
-//        val offset = editor.caretModel.primaryCaret.offset
-//        val document = editor.document
-//        return if (offset < document.textLength) document.text[offset] == ' ' else false
-        return true
-    }
 }

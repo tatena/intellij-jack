@@ -8,6 +8,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import ge.freeuni.jack.language.completion.PropertyItem
+import ge.freeuni.jack.language.completion.PropertyScope
 import ge.freeuni.jack.language.psi.*
 import java.util.stream.Collectors
 import kotlin.streams.toList
@@ -110,5 +112,41 @@ object JackUtil {
         val funcs = jclass.classBody?.funcList ?: return listOf()
         
         return funcs.filter { e -> e.funcScope.isMethod }
+    }
+
+    fun getAllVariables(elem: JackVarReference): Set<PropertyItem> {
+        val res = mutableSetOf<PropertyItem>()
+        
+        val locals = findLocalProps(elem)
+        locals.forEach { localDef ->
+            val type = localDef.type
+            localDef.propertyDefinitionList.forEach { def ->
+                res.add(PropertyItem(
+                    def.identifier.text,
+                    type,
+                    PropertyScope.LOCAL
+                ))
+            }
+        }
+        
+//        val params = findParamProps(elem)
+//        params.forEach { def ->
+//            res.add(def.identifier.text)
+//        }
+        
+        val props = findClassProps(elem)
+        props.forEach { defs ->
+            val type = defs.type
+            val scope = defs.propertyScope.scope
+            defs.propertyDefinitionList.forEach { def ->
+                res.add(PropertyItem(
+                    def.identifier.text,
+                    type,
+                    PropertyScope.resolveScope(scope)
+                ))
+            }
+        }
+        
+        return res
     }
 }
