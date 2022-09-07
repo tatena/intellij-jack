@@ -1,17 +1,12 @@
 package ge.freeuni.jack.language.psi.util
 
-import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.util.containers.OrderedSet
-import ge.freeuni.jack.language.JackIcons
 import ge.freeuni.jack.language.JackUtil
 import ge.freeuni.jack.language.psi.*
 import ge.freeuni.jack.language.reference.JackReferenceBase
-import org.jaxen.expr.VariableReferenceExpr
-import javax.swing.Icon
 
 object JackPsiImplUtil {
     @JvmStatic
@@ -20,8 +15,8 @@ object JackPsiImplUtil {
 
         return node?.findChildByType(JackTypes.IDENTIFIER)?.text ?: "EmptyClassName"
     }
-    
-    @JvmStatic 
+
+    @JvmStatic
     fun getScope(scope: JackPropertyScope): String {
         return when {
             scope.field != null -> "method"
@@ -29,7 +24,7 @@ object JackPsiImplUtil {
             else -> throw RuntimeException("invalid scope for given property")
         }
     }
-    
+
     @JvmStatic
     fun getType(prop: JackProperty): String {
         return when {
@@ -38,6 +33,7 @@ object JackPsiImplUtil {
             else -> throw RuntimeException("unresolved type for property")
         }
     }
+
     @JvmStatic
     fun getType(prop: JackParam): String {
         return when {
@@ -46,6 +42,7 @@ object JackPsiImplUtil {
             else -> throw RuntimeException("unresolved type for property")
         }
     }
+
     @JvmStatic
     fun getType(prop: JackLocalVars): String {
         return when {
@@ -138,51 +135,52 @@ object JackPsiImplUtil {
                 return manager.areElementsEquivalent(resolved, element)
                         || manager.areElementsEquivalent(resolved?.parent, element)
             }
+            
+            private fun resolveClass(): List<PsiElement> {
+                val res = mutableListOf<PsiElement>()
+                val classes = JackUtil.findClasses(elem.project)
+                for (jclass in classes) {
+                    if (jclass.identifier.textMatches(myText)) {
+                        res.add(jclass)
+                    }
+                }
+                return res
+            }
 
             override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
-                var fullRef = true
-                
-                val prevDot = elem.prevSibling
-                if (prevDot != null && prevDot.elementType == JackTypes.DOT) {
-                    val prevThis = prevDot.prevSibling
-                    if (prevThis != null && prevThis.elementType == JackTypes.THIS) {
-                        fullRef = false
-                    }
-                }
-                
-                if (fullRef) {
-                    var isLocal = false
-                    var isParam = false
-                    val localProps = JackUtil.findLocalProps(elem)
-                    for (prop in localProps) {
-                        for (def in prop.propertyDefinitionList) {
-                            if (def.textMatches(myText)) {
-                                myRes.add(def)
-                                isLocal = true
-                            }
-                        }
-                    }
-                    if (isLocal) return myRes
-
-
-                    val paramProps = JackUtil.findParamProps(elem)
-                    for (def in paramProps) {
-                        if (def.textMatches(myText)) {
-                            myRes.add(def)
-                            isParam = true
-                        }
-                    }
-                    if (isParam) return myRes
-
-                }
-                val props = JackUtil.findClassProps(elem)
-                for (prop in props) {
+                val classRef = resolveClass()
+                var isLocal = false
+                var isParam = false
+                val localProps = JackUtil.findLocalProps(elem)
+                for (prop in localProps) {
                     for (def in prop.propertyDefinitionList) {
                         if (def.textMatches(myText)) {
                             myRes.add(def)
+                            isLocal = true
                         }
                     }
                 }
+                if (isLocal) return myRes
+
+
+                val paramProps = JackUtil.findParamProps(elem)
+                for (def in paramProps) {
+                    if (def.textMatches(myText)) {
+                        myRes.add(def)
+                        isParam = true
+                    }
+                }
+                if (isParam) return myRes
+
+                val props = JackUtil.findClassProps(elem)
+                for (prop in props) {
+                    for (def in prop.propertyDefinitionList) {
+                        if (def.identifier.textMatches(myText)) {
+                            myRes.add(def)
+                        }
+                    }
+                }
+                if (myRes.isEmpty()) return classRef 
                 return myRes
             }
         }
@@ -198,7 +196,7 @@ object JackPsiImplUtil {
     fun resolve(elem: JackVarReference): PsiElement? {
         return elem.reference.resolve()
     }
-    
+
     @JvmStatic
     fun resolve(elem: JackFuncReference): PsiElement? {
         return elem.reference.resolve()
@@ -226,10 +224,11 @@ object JackPsiImplUtil {
             override fun resolveInner(incompleteCode: Boolean): List<PsiElement> {
                 val funcParent = (elem.parent as? JackCallExpr) ?: return listOf()
                 if (funcParent.parent is JackAccessExpr) {
-                    val access = funcParent.parent as JackAccessExpr
-                    val ref = access.dot.prevSibling
-                    if (ref.text[0].isUpperCase()) {
-                        val jclass = JackUtil.findClass(elem.project, ref.text) ?: return listOf()
+                    val accessExpr = funcParent.parent as JackAccessExpr
+                    val accessRef = accessExpr.dot.prevSibling as? JackAccessReference ?: return listOf()
+                    
+                    val optClass = JackUtil.findClass(elem.project, accessRef.text)
+                    optClass?.let { jclass ->
                         jclass.staticMethods.forEach { func ->
                             func.funcNameDefinition?.let { name ->
                                 if (name.identifier.textMatches(myText)) {
@@ -237,25 +236,22 @@ object JackPsiImplUtil {
                                 }
                             }
                         }
-                    } else {
-                        if (ref is JackReferenceExpr) {
-                            val varRef = ref.varReference
-                            val prop = varRef.resolve() ?: return listOf()
-                            if (prop is JackPropertyDefinition) {
-                                val resolved = prop.parent
-                                val classRef: String = when(resolved.elementType) {
-                                    JackTypes.PROPERTY -> (resolved as JackProperty).type
-                                    JackTypes.PARAM -> (resolved as JackParam).type
-                                    JackTypes.LOCAL_VARS -> (resolved as JackLocalVars).type
-                                    else -> return listOf()
-                                } 
-                                val jclass = JackUtil.findClass(elem.project, classRef) ?: return listOf()
-                                jclass.memberMethods.forEach { func ->
-                                    func.funcNameDefinition?.let { name ->
-                                        if (name.identifier.textMatches(myText)) {
-                                            myRes.add(name)
-                                        }
-                                    }
+                        return myRes
+                    }
+                    val prop = accessRef.varReference.resolve() ?: return listOf()
+                    if (prop is JackPropertyDefinition) {
+                        val resolved = prop.parent
+                        val classRef: String = when (resolved.elementType) {
+                            JackTypes.PROPERTY -> (resolved as JackProperty).type
+                            JackTypes.PARAM -> (resolved as JackParam).type
+                            JackTypes.LOCAL_VARS -> (resolved as JackLocalVars).type
+                            else -> return listOf()
+                        }
+                        val jclass = JackUtil.findClass(elem.project, classRef) ?: return listOf()
+                        jclass.memberMethods.forEach { func ->
+                            func.funcNameDefinition?.let { name ->
+                                if (name.identifier.textMatches(myText)) {
+                                    myRes.add(name)
                                 }
                             }
                         }
@@ -281,29 +277,29 @@ object JackPsiImplUtil {
         elem.replace(e)
         return elem
     }
-    
+
 
     @JvmStatic
     fun isMethod(elem: JackFuncScope): Boolean {
         return elem.method != null
     }
-    
+
     @JvmStatic
     fun isStatic(elem: JackFuncScope): Boolean {
         return elem.function != null
     }
-    
+
     @JvmStatic
     fun getStaticMethods(elem: JackClassDeclaration): List<JackFunc> {
         val body = elem.classBody ?: return listOf()
         return body.funcList.filter { e -> !e.funcScope.isMethod }
     }
+
     @JvmStatic
     fun getMemberMethods(elem: JackClassDeclaration): List<JackFunc> {
         val body = elem.classBody ?: return listOf()
         return body.funcList.filter { e -> e.funcScope.isMethod }
     }
-    
-    
-    
+
+
 }

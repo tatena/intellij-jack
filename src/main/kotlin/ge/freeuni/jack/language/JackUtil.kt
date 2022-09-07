@@ -11,6 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import ge.freeuni.jack.language.completion.PropertyItem
 import ge.freeuni.jack.language.completion.PropertyScope
 import ge.freeuni.jack.language.psi.*
+import java.util.TreeSet
 import java.util.stream.Collectors
 import kotlin.streams.toList
 
@@ -129,10 +130,16 @@ object JackUtil {
             }
         }
         
-//        val params = findParamProps(elem)
-//        params.forEach { def ->
-//            res.add(def.identifier.text)
-//        }
+        val params = getFuncParams(elem)?.paramList
+        params?.forEach { param ->
+            param.propertyDefinition?.let { def ->
+                res.add(PropertyItem(
+                    def.text,
+                    param.type,
+                    PropertyScope.PARAM
+                ))
+            }
+        }
         
         val props = findClassProps(elem)
         props.forEach { defs ->

@@ -18,9 +18,6 @@ class JackVariableCompletionProvider : CompletionProvider<CompletionParameters>(
         result: CompletionResultSet
     ) {
         val elem = parameters.position
-        println("variable element type is: ${elem.elementType}")
-        println("parent element type is: ${elem.parent.elementType}")
-        println("parent 2 element type is: ${elem.parent.parent.elementType}")
 
         if (elem.parent.elementType != JackTypes.VAR_REFERENCE) {
             return
@@ -35,21 +32,6 @@ class JackVariableCompletionProvider : CompletionProvider<CompletionParameters>(
                     .withIcon(JackIcons.FIELD)
             )
         }
-//        val jclass = PsiTreeUtil.findChildOfType(parameters.originalFile, JackClassDeclaration::class.java)
-//        if (jclass != null) {
-//            jclass.classBody?.propertyList?.forEach { item -> 
-//                item.propertyDefinitionList.forEach { def ->
-//                    result.addElement(
-//                        LookupElementBuilder
-//                            .create(def.identifier.text)
-//                            .withCaseSensitivity(false)
-//                            .withTypeText(item.type)
-//                            .withIcon(JackIcons.resolveProperty(item.propertyScope.scope))
-//                    )
-//                }
-//            }
-//            
-//        }
     }
 
 }

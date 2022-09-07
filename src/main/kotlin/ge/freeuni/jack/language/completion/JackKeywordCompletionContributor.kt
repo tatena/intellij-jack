@@ -8,6 +8,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
+import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import ge.freeuni.jack.language.psi.JackTypes
@@ -29,6 +30,11 @@ class JackKeywordCompletionContributor : CompletionContributor() {
         
         extend(CompletionType.BASIC, classRefPattern(), JackClassReferenceCompletionProvider())
         extend(CompletionType.BASIC, variablePattern(), JackVariableCompletionProvider())
+        extend(CompletionType.BASIC, methodPattern(), JackMethodCompletionProvider())
+    }
+
+    private fun methodPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement().afterLeaf(psiElement(JackTypes.DOT))
     }
 
     private fun variablePattern(): PsiElementPattern.Capture<PsiElement> {
@@ -39,7 +45,11 @@ class JackKeywordCompletionContributor : CompletionContributor() {
 
     private fun classRefPattern(): PsiElementPattern.Capture<PsiElement> {
         return psiElement(JackTypes.IDENTIFIER).withParent(
-            psiElement(JackTypes.REFERENCE_TYPE)
+            or(
+                psiElement(JackTypes.REFERENCE_TYPE),
+                psiElement(JackTypes.VAR_REFERENCE)
+                    .withParent(psiElement(JackTypes.REFERENCE_EXPR))
+            )
         )
     }
 
