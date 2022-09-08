@@ -23,8 +23,8 @@ class JackKeywordCompletionContributor : CompletionContributor() {
     }
 
     init {
-        extendBasic(newPropPattern(), "field", "static", "function", "constructor", "methods")
-        extendBasic(newFuncPattern(), "function", "constructor", "methods")
+        extendBasic(newPropPattern(), "field", "static", "function", "constructor", "method")
+        extendBasic(newFuncPattern(), "function", "constructor", "method")
         extendBasic(newStmtPattern(), "var", "let", "if", "do", "while", "return")
         extendBasic(newTypePattern(), "int", "boolean", "char")
         

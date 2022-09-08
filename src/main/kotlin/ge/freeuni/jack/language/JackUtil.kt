@@ -156,4 +156,9 @@ object JackUtil {
         
         return res
     }
+
+    fun findMethods(ref: JackVarReference): List<JackFunc> {
+        val jclass = getBody(ref).parent as? JackClassDeclaration ?: return listOf()
+        return jclass.memberMethods
+    }
 }

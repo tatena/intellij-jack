@@ -21,8 +21,8 @@ class JackClassReferenceCompletionProvider : CompletionProvider<CompletionParame
             val name = jclass.name ?: continue
             val elem = LookupElementBuilder
                 .create(name)
-                .withCaseSensitivity(false)
-                .withTypeText("Class")
+                .withCaseSensitivity(true)
+                .withTypeText("class")
                 .withIcon(JackIcons.FILE)
             result.addElement(elem)
         }

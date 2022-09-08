@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import ge.freeuni.jack.language.JackIcons
@@ -27,10 +28,36 @@ class JackVariableCompletionProvider : CompletionProvider<CompletionParameters>(
             result.addElement(
                 LookupElementBuilder
                     .create(item.name)
-                    .withCaseSensitivity(false)
+                    .withCaseSensitivity(true)
                     .withTypeText(item.type)
                     .withIcon(JackIcons.FIELD)
             )
+        }
+        val methods = JackUtil.findMethods(elem.parent as JackVarReference)
+        methods.forEach { func ->
+            var paramText = "("
+            func.funcParams?.paramList?.forEach { param ->
+                paramText += "${param.type} ${param.propertyDefinition?.identifier?.text}, "
+            }
+            if (paramText.length > 1) {
+                paramText = paramText.dropLast(2)
+            }
+            paramText += ")"
+            func.funcNameDefinition?.let { name ->
+                result.addElement(
+                    LookupElementBuilder.create(name.identifier.text)
+                        .withCaseSensitivity(true)
+                        .withIcon(JackIcons.METHOD)
+                        .withTypeText(getFuncType(func))
+                        .withTailText(paramText)
+                        .withInsertHandler { ctx, _ -> 
+                            ctx.document.insertString(
+                                ctx.selectionEndOffset, "()"
+                            )
+                            EditorModificationUtil.moveCaretRelatively(ctx.editor, 1)
+                        }
+                )
+            }
         }
     }
 
