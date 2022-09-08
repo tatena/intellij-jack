@@ -8,42 +8,49 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PsiElementPattern
+import com.intellij.patterns.StandardPatterns.or
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import ge.freeuni.jack.language.psi.JackTypes
 
 class JackKeywordCompletionContributor : CompletionContributor() {
-    private fun registerStandardCompletion(
-        pattern: ElementPattern<out PsiElement?>,
-        needSpace: Boolean,
-        vararg keywords: String
-    ) {
-        extend(
-            CompletionType.BASIC,
-            pattern,
-            JackKeywordCompletionProvider(needSpace, listOf(*keywords))
-        )
-    }
 
     private fun extendBasic(
         pattern: PsiElementPattern.Capture<PsiElement>,
         vararg keywords: String
     ) {
-        extend(CompletionType.BASIC, pattern, JackKeywordCompletionProvider(keywords = listOf(*keywords)))
+        extend(CompletionType.BASIC, pattern, JackKeywordCompletionProvider(listOf(*keywords)))
     }
 
     init {
-//        registerStandardCompletion(propertyPattern(), false, FIELD, STATIC)
-//        registerStandardCompletion(propertyTypePattern(), false, INT, CHAR, BOOLEAN)
-
-        extendBasic(newPropPattern(), "field", "static", "function", "constructor", "methods")
-        extendBasic(newFuncPattern(), "function", "constructor", "methods")
-
+        extendBasic(newPropPattern(), "field", "static", "function", "constructor", "method")
+        extendBasic(newFuncPattern(), "function", "constructor", "method")
         extendBasic(newStmtPattern(), "var", "let", "if", "do", "while", "return")
-
         extendBasic(newTypePattern(), "int", "boolean", "char")
         
-//        extend(CompletionType.BASIC, dotPattern(), JackThisCompletionProvider())
+        extend(CompletionType.BASIC, classRefPattern(), JackClassReferenceCompletionProvider())
+        extend(CompletionType.BASIC, variablePattern(), JackVariableCompletionProvider())
+        extend(CompletionType.BASIC, methodPattern(), JackMethodCompletionProvider())
+    }
+
+    private fun methodPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement().afterLeaf(psiElement(JackTypes.DOT))
+    }
+
+    private fun variablePattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement(JackTypes.IDENTIFIER).withSuperParent(2,
+            psiElement(JackTypes.REFERENCE_EXPR)
+        )
+    }
+
+    private fun classRefPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement(JackTypes.IDENTIFIER).withParent(
+            or(
+                psiElement(JackTypes.REFERENCE_TYPE),
+                psiElement(JackTypes.VAR_REFERENCE)
+                    .withParent(psiElement(JackTypes.REFERENCE_EXPR))
+            )
+        )
     }
 
     private fun newTypePattern(): PsiElementPattern.Capture<PsiElement> {
@@ -87,34 +94,6 @@ class JackKeywordCompletionContributor : CompletionContributor() {
 
 
     override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
-        val bla = parameters.position.parent.firstChild
         super.fillCompletionVariants(parameters, result)
     }
-
-
-    companion object {
-        private const val FIELD = "field"
-        private const val STATIC = "static"
-        private const val INT = "int"
-        private const val CHAR = "char"
-        private const val BOOLEAN = "boolean"
-        private const val SEMICOLON = ";"
-
-
-        fun propertyPattern(): PsiElementPattern.Capture<PsiElement> {
-            return  psiElement().andOr(
-                psiElement().afterLeaf(psiElement(JackTypes.SEMICOLON)),
-                psiElement().afterLeaf(psiElement(JackTypes.LBRACE))
-            )
-        }
-
-        fun propertyTypePattern(): PsiElementPattern.Capture<PsiElement> {
-            return psiElement().andOr(
-                psiElement().afterLeaf(psiElement(JackTypes.FIELD)),
-                psiElement().afterLeaf(psiElement(JackTypes.STATIC))
-            )
-        }
-
-    }
-
 }

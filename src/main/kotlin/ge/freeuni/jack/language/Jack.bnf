@@ -182,10 +182,11 @@ MulExpr ::= Expr MUL Expr
 DivExpr ::= Expr DIV Expr 
 CallExpr ::= FuncReference CallParams
 IndexExpr ::= Expr IndexParams
-AccessExpr ::= AccessReference DOT CallExpr
+AccessExpr ::= AccessReference DOT (CallExpr | CallPlaceholder) {pin=2}
 UnaryMinusExpr ::= MINUS Expr  {pin = 1}
 ReferenceExpr ::= VarReference
 UnaryNotExpr ::= NOT Expr  {pin = 1}
+
 
 LiteralExpr ::= BoolLiteral | NumLiteral | StringLiteral | ThisLiteral | NullLiteral
 ParenExpr ::= LPAREN Expr RPAREN {pin=1}
@@ -201,7 +202,7 @@ IndexParams ::= LBRACK Arg RBRACK {pin=1}
 Arguments ::= Arg (COMMA Arg)*  {pin(".*")=1}
 Arg ::= Expr
 
-AccessReference ::= ReferenceType | VarReference 
+AccessReference ::= VarReference 
 
 
 FuncReference ::= identifier {
@@ -210,3 +211,5 @@ FuncReference ::= identifier {
 VarReference ::= identifier {
 	methods=[setName resolve getReference]
 }
+
+CallPlaceholder ::= identifier

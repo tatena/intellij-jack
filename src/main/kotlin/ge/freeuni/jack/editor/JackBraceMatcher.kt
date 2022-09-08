@@ -7,7 +7,11 @@ import com.intellij.psi.tree.IElementType
 import ge.freeuni.jack.language.psi.JackTypes
 
 class JackBraceMatcher: PairedBraceMatcher {
-    override fun getPairs(): Array<BracePair> = arrayOf(BracePair(JackTypes.LBRACE, JackTypes.RBRACE, true))
+    override fun getPairs(): Array<BracePair> = arrayOf(
+        BracePair(JackTypes.LBRACE, JackTypes.RBRACE, true),
+        BracePair(JackTypes.LPAREN, JackTypes.RPAREN, false),
+        BracePair(JackTypes.LBRACK, JackTypes.RBRACK, false)
+    )
 
     override fun isPairedBracesAllowedBeforeType(lbraceType: IElementType, contextType: IElementType?): Boolean = true
 

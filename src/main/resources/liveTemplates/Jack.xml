@@ -2,7 +2,7 @@
 <templateSet group="Jack">
 
     <template name="while"
-              value="while ($EXPR$) {&#10;          $END$&#10;}"
+              value="while ($EXPR$) {&#10;  $END$&#10;}"
               description="while (...) { }" toReformat="true" toShortenFQNames="true">
         <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
@@ -11,7 +11,7 @@
     </template>
 
     <template name="function"
-              value="function $TYPE$ $NAME$ ($ARGS$) {&#10;          $END$&#10;             return;&#10;}"
+              value="function $TYPE$ $NAME$ ($ARGS$) {&#10; $END$&#10;  return;&#10;}"
               description="function () {...}" toReformat="true" toShortenFQNames="true">
         <variable name="TYPE" expression="" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
         <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
@@ -22,7 +22,7 @@
     </template>
 
     <template name="method"
-              value="method $TYPE$ $NAME$ ($ARGS$) {&#10;          $END$&#10;             return;&#10;}"
+              value="method $TYPE$ $NAME$ ($ARGS$) {&#10;   $END$&#10;  return;&#10;}"
               description="method () {...}" toReformat="true" toShortenFQNames="true">
         <variable name="TYPE" expression="" defaultValue="&quot;void&quot;" alwaysStopAt="true"/>
         <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
@@ -82,7 +82,7 @@
     </template>
 
     <template name="if"
-              value="if ($EXPR$) {&#10;$END$&#10;}&#10;"
+              value="if ($EXPR$) {&#10;$END$&#10;}"
               description="if (expr) { ... }" toReformat="true" toShortenFQNames="true">
         <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
@@ -91,7 +91,7 @@
     </template>
 
     <template name="else"
-              value="else {&#10;$END$&#10;}&#10;"
+              value="else {&#10;$END$&#10;}"
               description="else { ... }" toReformat="true" toShortenFQNames="true">
         <context>
             <option name="JACK_STATEMENT" value="true"/>
@@ -99,7 +99,7 @@
     </template>
 
     <template name="ifelse" title="if/else"
-              value="if ($EXPR$) {&#10;$END$&#10;} else {&#10;}&#10;"
+              value="if ($EXPR$) {&#10;$END$&#10;} else {&#10;&#10;}"
               description="if/else { ... }" toReformat="true" toShortenFQNames="true">
         <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
