@@ -184,7 +184,6 @@ CallExpr ::= FuncReference CallParams
 IndexExpr ::= Expr IndexParams
 AccessExpr ::= AccessReference DOT (CallExpr | CallPlaceholder) {pin=2}
 UnaryMinusExpr ::= MINUS Expr  {pin = 1}
-ReferenceExpr ::= VarReference
 UnaryNotExpr ::= NOT Expr  {pin = 1}
 
 
@@ -202,6 +201,7 @@ IndexParams ::= LBRACK Arg RBRACK {pin=1}
 Arguments ::= Arg (COMMA Arg)*  {pin(".*")=1}
 Arg ::= Expr
 
+ReferenceExpr ::= VarReference
 AccessReference ::= VarReference 
 
 

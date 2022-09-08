@@ -17,5 +17,4 @@ class JackKeywordCompletionProvider(private val  keywords: List<String>) :
             LookupElementBuilder.create("$keyword ")
         })
     }
-
 }
