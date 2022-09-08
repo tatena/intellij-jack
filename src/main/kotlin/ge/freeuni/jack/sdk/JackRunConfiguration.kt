@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.exists
 import ge.freeuni.jack.project.settings.JackProjectSettingsService
 import java.io.File
@@ -42,6 +43,7 @@ class JackRunConfiguration constructor(project: Project?, factory: Configuration
         val compiler = toolchain?.location.toString() + "/JackCompiler"
 
         val macCommands = listOf("sh", "$compiler.sh", out)
+        val windowsCommands = listOf("$compiler.bat", out)
 
         fun deleteDirectory(file: File) {
             if (!file.exists()) {
@@ -81,7 +83,11 @@ class JackRunConfiguration constructor(project: Project?, factory: Configuration
                 val srcFile = File(src)
                 copyFiles(srcFile, outFile)
 
-                val commandLine = GeneralCommandLine(macCommands)
+                val commandLine = if (SystemInfo.isWindows) {
+                    GeneralCommandLine(windowsCommands)
+                } else {
+                    GeneralCommandLine(macCommands)
+                }
                 val processHandler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
                 ProcessTerminatedListener.attach(processHandler)
                 return processHandler
