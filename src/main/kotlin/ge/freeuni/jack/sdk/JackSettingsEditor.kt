@@ -10,13 +10,10 @@ import javax.swing.JPanel
 
 class JackSettingsEditor : SettingsEditor<JackRunConfiguration>() {
     private var myPanel: JPanel? = null
-    private var myScriptName: LabeledComponent<TextFieldWithBrowseButton>? = null
     override fun resetEditorFrom(demoRunConfiguration: JackRunConfiguration) {
-        myScriptName!!.component.setText(demoRunConfiguration.scriptName)
     }
 
     override fun applyEditorTo(jackRunConfiguration: JackRunConfiguration) {
-        jackRunConfiguration.scriptName = myScriptName!!.component.text
     }
 
     override fun createEditor(): JComponent {
@@ -24,7 +21,5 @@ class JackSettingsEditor : SettingsEditor<JackRunConfiguration>() {
     }
 
     private fun createUIComponents() {
-        myScriptName = LabeledComponent()
-        myScriptName!!.component = TextFieldWithBrowseButton()
     }
 }

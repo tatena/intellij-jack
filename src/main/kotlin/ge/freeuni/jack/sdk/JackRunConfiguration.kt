@@ -70,7 +70,7 @@ class JackRunConfiguration constructor(project: Project?, factory: Configuration
                 }
             } else {
                 if (from.toString().endsWith(".jack")) {
-                    from.copyTo(File(from.toString().replace("/src/", "/out/")))
+                    from.copyTo(File(from.toString().replace("src", "out")))
                 }
             }
         }
