@@ -93,6 +93,8 @@
         
         <defaultLiveTemplates file="/liveTemplates/Jack.xml"/>
         <liveTemplateContext implementation="ge.freeuni.jack.editor.snippets.JackTemplateContext"/>
+        <configurationType implementation="ge.freeuni.jack.sdk.JackCommandConfigurationType"/>
+
 
     </extensions>
 
